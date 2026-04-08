@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Hindu Bansawali Builder V10.0</title>
+    <title>Enterprise Hindu Bansawali Builder V10.1</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -169,10 +169,16 @@
         #rishtaResult { text-align: center; margin-top: 20px; padding: 15px; background: var(--input-bg); border: 2px solid var(--saffron); border-radius: 8px; font-weight: bold; font-size: 15px; display: none; transition: 0.3s;}
         body.dark-mode #rishtaResult { color: #A5D6A7; }
 
-        #toast { visibility: hidden; min-width: 250px; background-color: var(--maroon); color: #fff; text-align: center; border-radius: 4px; padding: 12px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); font-weight: bold; border: 1px solid var(--border-color);}
+        #toast { visibility: hidden; min-width: 250px; background-color: var(--maroon); color: #fff; text-align: center; border-radius: 4px; padding: 12px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); font-weight: bold; border: 1px solid var(--saffron);}
         body.dark-mode #toast { background-color: var(--input-bg); color: var(--text-main); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         
+        /* Contact Links */
+        .contact-link { text-decoration: none; color: white; padding: 8px 15px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block; transition: 0.2s;}
+        .contact-link:hover { opacity: 0.8; }
+        .bg-linkedin { background: #0077b5; }
+        .bg-email { background: var(--maroon); }
+
         /* Print Overrides */
         @media print { 
             .toolbar, .zoom-controls, #clear-focus-btn, .modal, #toast, #upcoming-banner { display: none !important; } 
@@ -209,6 +215,7 @@
         </div>
 
         <div class="toolbar-controls">
+            <button class="btn" onclick="openAboutModal()">ℹ️ <span data-i18n="about">About</span></button>
             <button class="btn" onclick="toggleLanguage()" id="langBtn" title="Toggle Language">🌐 हिन्दी</button>
             <button class="btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Dark Mode"><span data-i18n="theme_dark">🌙 Theme</span></button>
             
@@ -257,6 +264,27 @@
             <div class="zoom-btn" onclick="adjustZoom(0.15)">+</div>
             <div class="zoom-btn" onclick="adjustZoom(-0.15)">-</div>
             <div class="zoom-btn" onclick="resetZoom()" style="font-size: 16px;">🔄</div>
+        </div>
+    </div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content" style="text-align: center; max-width: 400px;">
+            <span class="close" onclick="closeModal('aboutModal')">&times;</span>
+            <div class="om-symbol" style="font-size: 40px; margin-bottom: 10px;">ॐ</div>
+            <h3 style="color:var(--maroon); margin-top: 0; font-size: 20px;">Hindu Vanshavali Builder</h3>
+            <p style="font-size: 13px; opacity: 0.8;" data-i18n="about_desc">Designed and developed for families to beautifully document, explore, and preserve their rich heritage.</p>
+            
+            <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 20px 0;">
+            
+            <p style="font-size: 15px; margin-bottom: 5px;">Built with ❤️ by</p>
+            <h2 style="margin: 0 0 15px 0; color: var(--saffron);">Indrajit Kumar Shah</h2>
+            
+            <p style="font-size: 13px; opacity: 0.8; margin-bottom: 20px;" data-i18n="about_contact">Have suggestions, feature requests, or found a bug? Feel free to reach out!</p>
+            
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="https://www.linkedin.com/in/indrajit-shahkumar/" target="_blank" class="contact-link bg-linkedin">🔗 LinkedIn</a>
+                <a href="mailto:indrajitkumshah@outlook.com?subject=Bansawali Builder Feedback" class="contact-link bg-email">✉️ Email Me</a>
+            </div>
         </div>
     </div>
 
@@ -367,9 +395,9 @@
         function showToast(msg) { const toast = document.getElementById("toast"); toast.innerText = msg; toast.className = "show"; setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000); }
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); } });
 
-        // V10: Full i18n Dictionary
         const i18nDict = {
             en: {
+                about: "About", about_desc: "Designed and developed for families to beautifully document, explore, and preserve their rich heritage.", about_contact: "Have suggestions, feature requests, or found a bug? Feel free to reach out!",
                 theme_dark: "🌙 Theme", theme_light: "☀️ Light", rishta_calc: "🔗 Rishta Calc", insights: "📊 Insights",
                 add_ancestor: "+ Ancestor", share: "🔗 Share", import: "📂 Import", export_json: "💾 JSON",
                 export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ Exit Focus Lineage Mode",
@@ -388,6 +416,7 @@
                 gen_all: "👁️ View All Gens", gen_hl: "Highlight Gen"
             },
             hi: {
+                about: "परिचय", about_desc: "परिवारों के लिए अपनी समृद्ध विरासत को खूबसूरती से दस्तावेज़ित करने, खोजने और संरक्षित करने के लिए डिज़ाइन और विकसित किया गया।", about_contact: "क्या आपके पास सुझाव, सुविधा अनुरोध या कोई बग मिला है? बेझिझक संपर्क करें!",
                 theme_dark: "🌙 डार्क मोड", theme_light: "☀️ लाइट", rishta_calc: "🔗 रिश्ता खोजें", insights: "📊 आंकड़े (Insights)",
                 add_ancestor: "+ पूर्वज जोड़ें", share: "🔗 साझा करें", import: "📂 आयात (Import)", export_json: "💾 JSON",
                 export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ फोकस मोड बंद करें",
@@ -422,7 +451,7 @@
             });
             document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🌐 हिन्दी' : '🌐 English';
             document.getElementById('themeBtn').innerHTML = isDarkMode ? t('theme_light') : t('theme_dark');
-            updateGenDropdown(); renderSpouseUI(); // refresh dynamic text
+            updateGenDropdown(); renderSpouseUI(); 
         }
 
         function toggleLanguage() {
@@ -438,22 +467,25 @@
             else { document.body.classList.remove('dark-mode'); document.getElementById('themeBtn').innerHTML = t('theme_dark'); }
             if(!skipSave) localStorage.setItem('bansawali_theme', isDarkMode ? 'dark' : 'light');
         }
+        
+        function openAboutModal() {
+            document.getElementById('aboutModal').style.display = 'flex';
+        }
 
-        // --- 2. V10 MULTI-TREE REGISTRY & STORAGE ---
+        // --- 2. MULTI-TREE REGISTRY & STORAGE ---
         let treeRegistry = JSON.parse(localStorage.getItem('bansawali_registry')) || [];
         let activeTreeId = localStorage.getItem('bansawali_active_tree') || 'default';
         let appConfig = { title: "Shri Parivar Bansawali", deity: "", origin: "" };
         let familyData = null;
 
         function checkAndMigrateOldData() {
-            // If registry is empty, check if V9 data exists. If yes, migrate it safely to 'default' tree.
             if(treeRegistry.length === 0) {
                 const oldData = localStorage.getItem('bansawali_data');
                 const oldConfig = localStorage.getItem('bansawali_config');
                 if(oldData) {
                     localStorage.setItem('bansawali_data_default', oldData);
                     localStorage.setItem('bansawali_config_default', oldConfig || '{}');
-                    localStorage.removeItem('bansawali_data'); // Safe cleanup
+                    localStorage.removeItem('bansawali_data'); 
                     localStorage.removeItem('bansawali_config');
                     let conf = JSON.parse(oldConfig || '{}');
                     treeRegistry = [{id: 'default', name: conf.title || 'Shri Parivar Bansawali'}];
@@ -548,7 +580,7 @@
             } catch (e) { showToast("Data corrupted. Starting fresh."); familyData = generateDefaultTree(); }
             
             updateHeaderDisplay(); 
-            historyStack = []; historyIndex = -1; // Reset undo stack for new tree
+            historyStack = []; historyIndex = -1; 
             pushHistory(true); renderTree(); resetZoom();
         }
 
@@ -592,7 +624,7 @@
                     else { familyData = migrateData(sharedData); }
                     history.replaceState(null, '', window.location.pathname + window.location.search);
                     showToast("Shared tree loaded! Edits will save locally.");
-                    saveData(); saveSettings(); // force save to current slot
+                    saveData(); saveSettings(); 
                 } catch (e) { showToast("Invalid share link. Loading local data."); }
             } else {
                 loadTreeData();
@@ -676,7 +708,7 @@
             }
         }
 
-        // --- V9: FOCUS LINEAGE & GEN HIGHLIGHT ---
+        // --- FOCUS LINEAGE & GEN HIGHLIGHT ---
         let activeFocusPath = null; let activeGen = 'all';
 
         function activateFocusMode() {
@@ -939,7 +971,7 @@
             }
         }
 
-        // --- V8: INSIGHTS DASHBOARD ---
+        // --- INSIGHTS DASHBOARD ---
         function openInsightsModal() {
             let stats = { total: 0, males: 0, females: 0, deceased: 0, maxDepth: 0 };
             let datesArr = []; const dateRegex = /\b(0[1-9]|[12][0-9]|3[01])[\/\-](0[1-9]|1[012])\b/;
@@ -971,7 +1003,7 @@
             document.getElementById('datesListContainer').innerHTML = datesHtml; document.getElementById('insightsModal').style.display = 'flex';
         }
 
-        // --- V9.6: DYNAMIC KINSHIP ENGINE ---
+        // --- RISHTA CALCULATOR ---
         function openRishtaModal() {
             let optionsHtml = '';
             function gatherOptions(node) {
