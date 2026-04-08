@@ -20,7 +20,7 @@ https://shahindrajit.github.io/Parivar-vanshavali/
 - 👥 Add ancestors, descendants, spouses & generations
 - 🎯 Focus Lineage Mode (isolate a branch)
 - 🔍 Generation highlighting
-- 🌐 **Bilingual Support** – English & हिन्दी
+- 🌐 **Bilingual Support** – English, हिन्दी (Hindi), தமிழ் (Tamil), and ಕನ್ನಡ (Kannada)
 - 🌗 Light & Dark themes
 - 🔗 Kinship (Rishta) Calculator
 - 📊 Family Insights Dashboard
