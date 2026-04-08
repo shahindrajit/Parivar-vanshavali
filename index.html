@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Hindu Bansawali Builder V10.1</title>
+    <title>Enterprise Hindu Bansawali Builder V11.0</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     
     <style>
-        /* LIGHT THEME VARIABLES */
         :root { 
             --saffron: #FF9933; --maroon: #800000; --gold: #FFB300; 
             --bg-warm: #FFF8E7; --border-color: #D4AF37; 
@@ -20,7 +19,6 @@
             --spouse-bg: rgba(255,255,255,0.6); --input-bg: #fff;
         }
         
-        /* DARK THEME VARIABLES */
         body.dark-mode {
             --bg-warm: #121417; --border-color: #555555; --text-main: #F0EAD6;
             --node-bg: #1E2024; --modal-bg: #1E2024;
@@ -215,8 +213,14 @@
         </div>
 
         <div class="toolbar-controls">
+            <select class="btn" id="langSelector" onchange="changeLanguage(this.value)" style="background: var(--saffron); color: var(--maroon);">
+                <option value="en">🌐 English</option>
+                <option value="hi">🌐 हिन्दी</option>
+                <option value="ta">🌐 தமிழ்</option>
+                <option value="kn">🌐 ಕನ್ನಡ</option>
+            </select>
+            
             <button class="btn" onclick="openAboutModal()">ℹ️ <span data-i18n="about">About</span></button>
-            <button class="btn" onclick="toggleLanguage()" id="langBtn" title="Toggle Language">🌐 हिन्दी</button>
             <button class="btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Dark Mode"><span data-i18n="theme_dark">🌙 Theme</span></button>
             
             <button class="btn" onclick="openRishtaModal()"><span data-i18n="rishta_calc">🔗 Rishta Calc</span></button>
@@ -271,7 +275,7 @@
         <div class="modal-content" style="text-align: center; max-width: 400px;">
             <span class="close" onclick="closeModal('aboutModal')">&times;</span>
             <div class="om-symbol" style="font-size: 40px; margin-bottom: 10px;">ॐ</div>
-            <h3 style="color:var(--maroon); margin-top: 0; font-size: 20px;">Hindu Vanshavali Builder</h3>
+            <h3 style="color:var(--maroon); margin-top: 0; font-size: 20px;">Enterprise Hindu Bansawali Builder</h3>
             <p style="font-size: 13px; opacity: 0.8;" data-i18n="about_desc">Designed and developed for families to beautifully document, explore, and preserve their rich heritage.</p>
             
             <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 20px 0;">
@@ -310,8 +314,8 @@
             <div class="section-title" data-i18n="primary_info">Primary Info</div>
             <div class="flex-row">
                 <div class="form-group"><label data-i18n="name_en">Name (English)</label><input type="text" id="editName"></div>
-                <div class="form-group"><label data-i18n="name_hi">Name (Hindi)</label>
-                    <div class="input-with-btn"><input type="text" id="editNameHi"><button id="btnTransEdit" class="translate-btn" onclick="translateName('editName', 'editNameHi', 'btnTransEdit')">A→अ</button></div>
+                <div class="form-group"><label data-i18n="name_local">Name (Local Script)</label>
+                    <div class="input-with-btn"><input type="text" id="editNameHi"><button id="btnTransEdit" class="translate-btn" onclick="translateName('editName', 'editNameHi', 'btnTransEdit')" data-i18n="trans_btn">A→अ</button></div>
                 </div>
             </div>
 
@@ -395,6 +399,7 @@
         function showToast(msg) { const toast = document.getElementById("toast"); toast.innerText = msg; toast.className = "show"; setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000); }
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); } });
 
+        // V11.0: Full Pan-India i18n Dictionary
         const i18nDict = {
             en: {
                 about: "About", about_desc: "Designed and developed for families to beautifully document, explore, and preserve their rich heritage.", about_contact: "Have suggestions, feature requests, or found a bug? Feel free to reach out!",
@@ -404,7 +409,7 @@
                 modal_identity: "⚙️ Family Identity", identity_sub: "These sacred details will appear on all your printed charts.",
                 family_title: "Family Title", deity: "Kuldevta / Kuldevi (Deity)", origin: "Mool Niwas (Ancestral Origin)",
                 save_identity: "Save Identity", modal_profile: "Member Profile", focus_btn: "🎯 View Isolated Branch (Focus Lineage)",
-                primary_info: "Primary Info", name_en: "Name (English)", name_hi: "Name (Hindi)", gender: "Gender",
+                primary_info: "Primary Info", name_en: "Name (English)", name_local: "Name (Local Script)", trans_btn: "A→अ", gender: "Gender",
                 status: "Status", dob: "Birth (Date/Year)", dod: "Death (Date/Year)", gotra: "Gotra", bio_mother: "Biological Mother",
                 spouse_details: "Spouse Details", add_spouse: "+ Add Spouse", hist_notes: "Historical Notes", save_profile: "Save Profile",
                 add_descendant: "Add Descendant", child_name: "Child Name (Eng)", son_m: "Son (M)", daughter_f: "Daughter (F)",
@@ -416,14 +421,14 @@
                 gen_all: "👁️ View All Gens", gen_hl: "Highlight Gen"
             },
             hi: {
-                about: "परिचय", about_desc: "परिवारों के लिए अपनी समृद्ध विरासत को खूबसूरती से दस्तावेज़ित करने, खोजने और संरक्षित करने के लिए डिज़ाइन और विकसित किया गया।", about_contact: "क्या आपके पास सुझाव, सुविधा अनुरोध या कोई बग मिला है? बेझिझक संपर्क करें!",
-                theme_dark: "🌙 डार्क मोड", theme_light: "☀️ लाइट", rishta_calc: "🔗 रिश्ता खोजें", insights: "📊 आंकड़े (Insights)",
-                add_ancestor: "+ पूर्वज जोड़ें", share: "🔗 साझा करें", import: "📂 आयात (Import)", export_json: "💾 JSON",
+                about: "परिचय", about_desc: "परिवारों के लिए अपनी समृद्ध विरासत को खूबसूरती से दस्तावेज़ित करने, खोजने और संरक्षित करने के लिए विकसित किया गया।", about_contact: "क्या आपके पास सुझाव, सुविधा अनुरोध या कोई बग मिला है? बेझिझक संपर्क करें!",
+                theme_dark: "🌙 डार्क मोड", theme_light: "☀️ लाइट", rishta_calc: "🔗 रिश्ता खोजें", insights: "📊 आंकड़े",
+                add_ancestor: "+ पूर्वज जोड़ें", share: "🔗 साझा करें", import: "📂 आयात", export_json: "💾 JSON",
                 export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ फोकस मोड बंद करें",
-                modal_identity: "⚙️ पारिवारिक पहचान", identity_sub: "ये पवित्र विवरण आपके प्रिंट किए गए चार्ट पर दिखाई देंगे।",
-                family_title: "परिवार का शीर्षक", deity: "कुलदेवता / कुलदेवी", origin: "मूल निवास (गाँव/शहर)",
+                modal_identity: "⚙️ पारिवारिक पहचान", identity_sub: "ये विवरण आपके प्रिंट किए गए चार्ट पर दिखाई देंगे।",
+                family_title: "परिवार का शीर्षक", deity: "कुलदेवता / कुलदेवी", origin: "मूल निवास",
                 save_identity: "पहचान सहेजें", modal_profile: "सदस्य प्रोफ़ाइल", focus_btn: "🎯 केवल इस शाखा को देखें",
-                primary_info: "प्राथमिक जानकारी", name_en: "नाम (अंग्रेजी)", name_hi: "नाम (हिंदी)", gender: "लिंग",
+                primary_info: "प्राथमिक जानकारी", name_en: "नाम (अंग्रेजी)", name_local: "नाम (हिंदी)", trans_btn: "A→अ", gender: "लिंग",
                 status: "स्थिति", dob: "जन्म (तिथि/वर्ष)", dod: "मृत्यु (तिथि/वर्ष)", gotra: "गोत्र", bio_mother: "जैविक माता",
                 spouse_details: "जीवनसाथी का विवरण", add_spouse: "+ जीवनसाथी जोड़ें", hist_notes: "ऐतिहासिक नोट्स", save_profile: "प्रोफ़ाइल सहेजें",
                 add_descendant: "वंशज जोड़ें", child_name: "बच्चे का नाम (अंग्रेजी)", son_m: "पुत्र (M)", daughter_f: "पुत्री (F)",
@@ -431,8 +436,46 @@
                 insights_title: "📊 पारिवारिक आंकड़े", total_mem: "कुल सदस्य", gens: "पीढ़ियाँ", males: "पुरुष", females: "महिलाएं",
                 deceased_stat: "स्वर्गीय", dates_rem: "🗓️ याद रखने योग्य तिथियां", rishta_title: "🔗 रिश्ता कैलकुलेटर",
                 rishta_sub: "पता करें कि दो परिवार के सदस्य कैसे संबंधित हैं।", person1: "व्यक्ति 1", person2: "व्यक्ति 2",
-                find_rel: "रिश्ता खोजें", my_trees: "मेरे पेड़ (Trees):", relation: "रिश्ता", married: "विवाहित", divorced: "तलाकशुदा",
-                gen_all: "👁️ सभी पीढ़ियाँ देखें", gen_hl: "पीढ़ी हाइलाइट करें"
+                find_rel: "रिश्ता खोजें", my_trees: "मेरे पेड़:", relation: "रिश्ता", married: "विवाहित", divorced: "तलाकशुदा",
+                gen_all: "👁️ सभी पीढ़ियाँ", gen_hl: "पीढ़ी हाइलाइट करें"
+            },
+            ta: {
+                about: "பற்றி", about_desc: "குடும்பங்கள் தங்கள் வளமான பாரம்பரியத்தை ஆவணப்படுத்தவும் பாதுகாக்கவும் வடிவமைக்கப்பட்டுள்ளது.", about_contact: "பரிந்துரைகள் உள்ளதா? எங்களை தொடர்பு கொள்ளவும்!",
+                theme_dark: "🌙 டார்க் மோட்", theme_light: "☀️ லைட்", rishta_calc: "🔗 உறவு கால்குலேட்டர்", insights: "📊 புள்ளிவிவரங்கள்",
+                add_ancestor: "+ மூதாதையர்", share: "🔗 பகிர்", import: "📂 இறக்குமதி", export_json: "💾 JSON",
+                export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ ஃபோகஸ் பயன்முறையிலிருந்து வெளியேறு",
+                modal_identity: "⚙️ குடும்ப அடையாளம்", identity_sub: "இந்த விவரங்கள் உங்கள் அச்சிடப்பட்ட விளக்கப்படங்களில் தோன்றும்.",
+                family_title: "குடும்ப தலைப்பு", deity: "குலதெய்வம்", origin: "பூர்வீகம்",
+                save_identity: "அடையாளத்தை சேமி", modal_profile: "உறுப்பினர் சுயவிவரம்", focus_btn: "🎯 இந்த கிளையை மட்டும் காண்க",
+                primary_info: "முதன்மை தகவல்", name_en: "பெயர் (ஆங்கிலம்)", name_local: "பெயர் (தமிழ்)", trans_btn: "A→அ", gender: "பாலினம்",
+                status: "நிலை", dob: "பிறப்பு (தேதி/ஆண்டு)", dod: "இறப்பு (தேதி/ஆண்டு)", gotra: "கோத்திரம்", bio_mother: "உயிரியல் தாய்",
+                spouse_details: "துணைவர் விவரங்கள்", add_spouse: "+ துணைவரை சேர்", hist_notes: "வரலாற்று குறிப்புகள்", save_profile: "சுயவிவரத்தை சேமி",
+                add_descendant: "சந்ததியை சேர்", child_name: "குழந்தையின் பெயர் (ஆங்கிலம்)", son_m: "மகன் (M)", daughter_f: "மகள் (F)",
+                add_btn: "+ சேர்", delete_branch: "⚠️ உறுப்பினரை நீக்கு", male: "ஆண்", female: "பெண்", living: "உயிருடன்", deceased: "காலமானவர்",
+                insights_title: "📊 குடும்ப புள்ளிவிவரங்கள்", total_mem: "மொத்த உறுப்பினர்கள்", gens: "தலைமுறைகள்", males: "ஆண்கள்", females: "பெண்கள்",
+                deceased_stat: "காலமானவர்", dates_rem: "🗓️ நினைவில் கொள்ள வேண்டிய தேதிகள்", rishta_title: "🔗 உறவு கால்குலேட்டர்",
+                rishta_sub: "இரண்டு குடும்ப உறுப்பினர்கள் எவ்வாறு தொடர்புடையவர்கள் என்பதைக் கண்டறியவும்.", person1: "நபர் 1", person2: "நபர் 2",
+                find_rel: "உறவைக் கண்டுபிடி", my_trees: "என் குடும்ப மரங்கள்:", relation: "உறவு", married: "திருமணமானவர்", divorced: "விவாகரத்து பெற்றவர்",
+                gen_all: "👁️ அனைத்து தலைமுறைகள்", gen_hl: "தலைமுறை ஹைலைட்"
+            },
+            kn: {
+                about: "ಬಗ್ಗೆ", about_desc: "ಕುಟುಂಬಗಳು ತಮ್ಮ ಶ್ರೀಮಂತ ಪರಂಪರೆಯನ್ನು ದಾಖಲಿಸಲು ಮತ್ತು ಸಂರಕ್ಷಿಸಲು ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ.", about_contact: "ಸಲಹೆಗಳಿವೆಯೇ? ದಯವಿಟ್ಟು ಸಂಪರ್ಕಿಸಿ!",
+                theme_dark: "🌙 ಡಾರ್ಕ್ ಮೋಡ್", theme_light: "☀️ ಲೈಟ್", rishta_calc: "🔗 ಸಂಬಂಧ ಕ್ಯಾಲ್ಕುಲೇಟರ್", insights: "📊 ಅಂಕಿಅಂಶಗಳು",
+                add_ancestor: "+ ಪೂರ್ವಜ", share: "🔗 ಹಂಚಿಕೊಳ್ಳಿ", import: "📂 ಆಮದು", export_json: "💾 JSON",
+                export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ ಫೋಕಸ್ ಮೋಡ್‌ನಿಂದ ನಿರ್ಗಮಿಸಿ",
+                modal_identity: "⚙️ ಕುಟುಂಬದ ಗುರುತು", identity_sub: "ಈ ವಿವರಗಳು ನಿಮ್ಮ ಮುದ್ರಿತ ಚಾರ್ಟ್‌ಗಳಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತವೆ.",
+                family_title: "ಕುಟುಂಬದ ಶೀರ್ಷಿಕೆ", deity: "ಕುಲದೇವತೆ", origin: "ಮೂಲ ನಿವಾಸ",
+                save_identity: "ಗುರುತನ್ನು ಉಳಿಸಿ", modal_profile: "ಸದಸ್ಯರ ಪ್ರೊಫೈಲ್", focus_btn: "🎯 ಈ ಶಾಖೆಯನ್ನು ಮಾತ್ರ ವೀಕ್ಷಿಸಿ",
+                primary_info: "ಪ್ರಾಥಮಿಕ ಮಾಹಿತಿ", name_en: "ಹೆಸರು (ಇಂಗ್ಲಿಷ್)", name_local: "ಹೆಸರು (ಕನ್ನಡ)", trans_btn: "A→ಅ", gender: "ಲಿಂಗ",
+                status: "ಸ್ಥಿತಿ", dob: "ಜನನ (ದಿನಾಂಕ/ವರ್ಷ)", dod: "ಮರಣ (ದಿನಾಂಕ/ವರ್ಷ)", gotra: "ಗೋತ್ರ", bio_mother: "ಜೈವಿಕ ತಾಯಿ",
+                spouse_details: "ಸಂಗಾತಿಯ ವಿವರಗಳು", add_spouse: "+ ಸಂಗಾತಿಯನ್ನು ಸೇರಿಸಿ", hist_notes: "ಐತಿಹಾಸಿಕ ಟಿಪ್ಪಣಿಗಳು", save_profile: "ಪ್ರೊಫೈಲ್ ಉಳಿಸಿ",
+                add_descendant: "ಸಂತತಿಯನ್ನು ಸೇರಿಸಿ", child_name: "ಮಗುವಿನ ಹೆಸರು (ಇಂಗ್ಲಿಷ್)", son_m: "ಮಗ (M)", daughter_f: "ಮಗಳು (F)",
+                add_btn: "+ ಸೇರಿಸಿ", delete_branch: "⚠️ ಸದಸ್ಯರನ್ನು ಅಳಿಸಿ", male: "ಪುರುಷ", female: "ಮಹಿಳೆ", living: "ಜೀವಂತ", deceased: "ಮೃತಪಟ್ಟಿದ್ದಾರೆ",
+                insights_title: "📊 ಕುಟುಂಬದ ಅಂಕಿಅಂಶಗಳು", total_mem: "ಒಟ್ಟು ಸದಸ್ಯರು", gens: "ತಲೆಮಾರುಗಳು", males: "ಪುರುಷರು", females: "ಮಹಿಳೆಯರು",
+                deceased_stat: "ಮೃತಪಟ್ಟಿದ್ದಾರೆ", dates_rem: "🗓️ ನೆನಪಿಡಬೇಕಾದ ದಿನಾಂಕಗಳು", rishta_title: "🔗 ಸಂಬಂಧ ಕ್ಯಾಲ್ಕುಲೇಟರ್",
+                rishta_sub: "ಇಬ್ಬರು ಕುಟುಂಬ ಸದಸ್ಯರು ಹೇಗೆ ಸಂಬಂಧ ಹೊಂದಿದ್ದಾರೆ ಎಂಬುದನ್ನು ಕಂಡುಕೊಳ್ಳಿ.", person1: "ವ್ಯಕ್ತಿ 1", person2: "ವ್ಯಕ್ತಿ 2",
+                find_rel: "ಸಂಬಂಧವನ್ನು ಹುಡುಕಿ", my_trees: "ನನ್ನ ಮರಗಳು:", relation: "ಸಂಬಂಧ", married: "ವಿವಾಹಿತ", divorced: "ವಿಚ್ಛೇದಿತ",
+                gen_all: "👁️ ಎಲ್ಲಾ ತಲೆಮಾರುಗಳು", gen_hl: "ತಲೆಮಾರು ಹೈಲೈಟ್"
             }
         };
 
@@ -449,15 +492,16 @@
                     });
                 }
             });
-            document.getElementById('langBtn').innerHTML = currentLang === 'en' ? '🌐 हिन्दी' : '🌐 English';
+            document.getElementById('langSelector').value = currentLang;
             document.getElementById('themeBtn').innerHTML = isDarkMode ? t('theme_light') : t('theme_dark');
             updateGenDropdown(); renderSpouseUI(); 
         }
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'en' ? 'hi' : 'en';
+        function changeLanguage(lang) {
+            currentLang = lang;
             localStorage.setItem('bansawali_lang', currentLang);
             applyLanguage();
+            renderTree(); // refresh canvas UI terms
         }
 
         let isDarkMode = false;
@@ -603,8 +647,8 @@
 
         function generateDefaultTree() {
             return {
-                id: generateUUID(), name: 'Mool Purush', nameHi: 'मूल पुरुष', gender: 'M', status: 'Deceased', dob: '1800s', dod: '', gotra: 'Kashyap', motherId: '', notes: 'Founder of the family tree.',
-                spouses: [{id: generateUUID(), name: 'Mool Mata', nameHi: 'मूल माता', status: 'Deceased', relation: 'Married', dob: '', dod: ''}], collapsed: false, children: []
+                id: generateUUID(), name: 'Mool Purush', nameHi: '', gender: 'M', status: 'Deceased', dob: '1800s', dod: '', gotra: 'Kashyap', motherId: '', notes: 'Founder of the family tree.',
+                spouses: [{id: generateUUID(), name: 'Mool Mata', nameHi: '', status: 'Deceased', relation: 'Married', dob: '', dod: ''}], collapsed: false, children: []
             };
         }
 
@@ -642,13 +686,18 @@
         function redo() { if (historyIndex < historyStack.length - 1) { historyIndex++; familyData = JSON.parse(historyStack[historyIndex]); renderTree(); saveData(); updateHistoryUI(); } }
         function saveData() { localStorage.setItem('bansawali_data_' + activeTreeId, JSON.stringify(familyData)); }
 
-        // --- 3. TRANSLATION API ---
+        // --- 3. DYNAMIC TRANSLATION API (V11.0) ---
         async function translateName(sourceId, targetId, btnId) {
             const text = document.getElementById(sourceId).value; if(!text) return;
             const targetInput = document.getElementById(targetId); const btn = document.getElementById(btnId);
             const origTxt = btn.innerText; btn.innerText = "⏳"; btn.disabled = true;
+            
+            // Dynamic routing based on selected UI Language
+            const langMap = { 'hi': 'hi-t-i0-und', 'ta': 'ta-t-i0-und', 'kn': 'kn-t-i0-und', 'en': 'hi-t-i0-und' };
+            const itcCode = langMap[currentLang] || 'hi-t-i0-und';
+
             try {
-                const response = await fetch(`https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=hi-t-i0-und&num=1`);
+                const response = await fetch(`https://inputtools.google.com/request?text=${encodeURIComponent(text)}&itc=${itcCode}&num=1`);
                 if(!response.ok) throw new Error("API HTTP Error"); const data = await response.json();
                 if(data[0] === "SUCCESS") targetInput.value = data[1][0][1][0];
             } catch (e) { btn.innerText = "❌"; setTimeout(() => { btn.innerText = origTxt; btn.disabled = false; }, 2000); return; } 
@@ -708,7 +757,7 @@
             }
         }
 
-        // --- FOCUS LINEAGE & GEN HIGHLIGHT ---
+        // --- V9: FOCUS LINEAGE & GEN HIGHLIGHT ---
         let activeFocusPath = null; let activeGen = 'all';
 
         function activateFocusMode() {
@@ -828,7 +877,7 @@
                 node.spouses.forEach(sp => {
                     let spPrefix = getPrefix(node.gender === 'M' ? 'F' : 'M', sp.status);
                     let spStatusIcon = sp.status === 'Deceased' ? ' 🕊️' : '';
-                    let relFlag = sp.relation === 'Divorced' ? ' (Divorced)' : '';
+                    let relFlag = sp.relation === 'Divorced' ? ` (${t('divorced')})` : '';
                     let spClass = sp.relation === 'Divorced' ? 'spouse divorced' : 'spouse';
                     let sHi = sp.nameHi ? `<br><span class="node-hindi">${spPrefix.hi} ${sanitize(sp.nameHi)}</span>` : '';
                     let spDateStr = formatDates(sp.dob, sp.dod, sp.status);
@@ -881,7 +930,7 @@
                         <button class="remove-spouse-btn" onclick="removeSpouseEntry(${idx})">✖</button>
                         <div class="flex-row">
                             <div class="form-group"><label>${t('name_en')}</label><input type="text" id="spName_${idx}" value="${sanitize(sp.name)}"></div>
-                            <div class="form-group"><label>${t('name_hi')}</label><div class="input-with-btn"><input type="text" id="spNameHi_${idx}" value="${sanitize(sp.nameHi)}"><button id="btnTransSp_${idx}" class="translate-btn" onclick="translateName('spName_${idx}', 'spNameHi_${idx}', 'btnTransSp_${idx}')">A→अ</button></div></div>
+                            <div class="form-group"><label>${t('name_local')}</label><div class="input-with-btn"><input type="text" id="spNameHi_${idx}" value="${sanitize(sp.nameHi)}"><button id="btnTransSp_${idx}" class="translate-btn" data-i18n="trans_btn" onclick="translateName('spName_${idx}', 'spNameHi_${idx}', 'btnTransSp_${idx}')">${t('trans_btn')}</button></div></div>
                         </div>
                         <div class="flex-row">
                             <div class="form-group"><label>${t('status')}</label><select id="spStatus_${idx}" onchange="toggleSpouseDOD(${idx})"><option value="Living" ${sp.status === 'Living'?'selected':''}>${t('living')}</option><option value="Deceased" ${sp.status === 'Deceased'?'selected':''}>${t('deceased')}</option></select></div>
@@ -971,7 +1020,7 @@
             }
         }
 
-        // --- INSIGHTS DASHBOARD ---
+        // --- V8: INSIGHTS DASHBOARD ---
         function openInsightsModal() {
             let stats = { total: 0, males: 0, females: 0, deceased: 0, maxDepth: 0 };
             let datesArr = []; const dateRegex = /\b(0[1-9]|[12][0-9]|3[01])[\/\-](0[1-9]|1[012])\b/;
@@ -1003,7 +1052,59 @@
             document.getElementById('datesListContainer').innerHTML = datesHtml; document.getElementById('insightsModal').style.display = 'flex';
         }
 
-        // --- RISHTA CALCULATOR ---
+        // --- V11.0: DYNAMIC KINSHIP ENGINE WITH MULTI-LINGUAL SUPPORT ---
+        function getKinshipTerm(englishTerm, gender) {
+            const relDict = {
+                en: {
+                    'Father': "Father", 'Mother': "Mother", 'Son': "Son", 'Daughter': "Daughter",
+                    'Husband': "Husband", 'Wife': "Wife", 'Brother': "Brother", 'Sister': "Sister",
+                    'Grandfather': "Grandfather", 'Grandmother': "Grandmother", 'Grandson': "Grandson", 'Granddaughter': "Granddaughter",
+                    'Great-Grandfather': "Great-Grandfather", 'Great-Grandmother': "Great-Grandmother", 'Great-Grandson': "Great-Grandson", 'Great-Granddaughter': "Great-Granddaughter",
+                    'Uncle': "Uncle", 'Aunt': "Aunt", 'Nephew': "Nephew", 'Niece': "Niece", 'Cousin': "Cousin",
+                    'Father-in-law': "Father-in-law", 'Mother-in-law': "Mother-in-law", 'Son-in-law': "Son-in-law", 'Daughter-in-law': "Daughter-in-law",
+                    'Brother-in-law': "Brother-in-law", 'Sister-in-law': "Sister-in-law", 'Step-Father': "Step-Father", 'Step-Mother': "Step-Mother",
+                    'Step-Son': "Step-Son", 'Step-Daughter': "Step-Daughter", 'Half-Brother': "Half-Brother", 'Half-Sister': "Half-Sister",
+                    'Grand-Nephew': "Grand-Nephew", 'Grand-Niece': "Grand-Niece", 'Grand-Uncle': "Grand-Uncle", 'Grand-Aunt': "Grand-Aunt"
+                },
+                hi: {
+                    'Father': "पिता", 'Mother': "माता", 'Son': "पुत्र", 'Daughter': "पुत्री",
+                    'Husband': "पति", 'Wife': "पत्नी", 'Brother': "भाई", 'Sister': "बहन",
+                    'Grandfather': "दादा/नाना", 'Grandmother': "दादी/नानी", 'Grandson': "पोता/नाती", 'Granddaughter': "पोती/नातिन",
+                    'Great-Grandfather': "परदादा/परनाना", 'Great-Grandmother': "परदादी/परनानी", 'Great-Grandson': "परपोता/परनाती", 'Great-Granddaughter': "परपोती/परनातिन",
+                    'Uncle': "चाचा/ताऊ/मामा", 'Aunt': "बुआ/मौसी/चाची", 'Nephew': "भतीजा/भांजा", 'Niece': "भतीजी/भांजी", 'Cousin': "चचेरा/ममेरा भाई/बहन",
+                    'Father-in-law': "ससुर", 'Mother-in-law': "सास", 'Son-in-law': "दामाद", 'Daughter-in-law': "बहू",
+                    'Brother-in-law': "जीजा/साला/देवर", 'Sister-in-law': "भाभी/साली/ननद", 'Step-Father': "सौतेला पिता", 'Step-Mother': "सौतेली माँ",
+                    'Step-Son': "सौतेला बेटा", 'Step-Daughter': "सौतेली बेटी", 'Half-Brother': "सौतेला भाई", 'Half-Sister': "सौतेली बहन",
+                    'Grand-Nephew': "पोता/नाती", 'Grand-Niece': "पोती/नातिन", 'Grand-Uncle': "दादा/नाना", 'Grand-Aunt': "दादी/नानी"
+                },
+                ta: {
+                    'Father': "தந்தை", 'Mother': "தாய்", 'Son': "மகன்", 'Daughter': "மகள்",
+                    'Husband': "கணவன்", 'Wife': "மனைவி", 'Brother': "சகோதரன்", 'Sister': "சகோதரி",
+                    'Grandfather': "தாத்தா", 'Grandmother': "பாட்டி", 'Grandson': "பேரன்", 'Granddaughter': "பேத்தி",
+                    'Great-Grandfather': "கொள்ளுத் தாத்தா", 'Great-Grandmother': "கொள்ளுப் பாட்டி", 'Great-Grandson': "கொள்ளுப் பேரன்", 'Great-Granddaughter': "கொள்ளுப் பேத்தி",
+                    'Uncle': "மாமா/சித்தப்பா", 'Aunt': "அத்தை/சித்தி", 'Nephew': "மருமகன்", 'Niece': "மருமகள்", 'Cousin': "ஒன்றுவிட்ட சகோதரன்/சகோதரி",
+                    'Father-in-law': "மாமனார்", 'Mother-in-law': "மாமியார்", 'Son-in-law': "மருமகன்", 'Daughter-in-law': "மருமகள்",
+                    'Brother-in-law': "மைத்துனன்", 'Sister-in-law': "மைத்துனி", 'Step-Father': "மாற்றாந்தந்தை", 'Step-Mother': "மாற்றாந்தாய்",
+                    'Step-Son': "மாற்றான் மகன்", 'Step-Daughter': "மாற்றான் மகள்", 'Half-Brother': "அரைச் சகோதரன்", 'Half-Sister': "அரைச் சகோதரி",
+                    'Grand-Nephew': "பேரன்", 'Grand-Niece': "பேத்தி", 'Grand-Uncle': "தாத்தா", 'Grand-Aunt': "பாட்டி"
+                },
+                kn: {
+                    'Father': "ತಂದೆ", 'Mother': "ತಾಯಿ", 'Son': "ಮಗ", 'Daughter': "ಮಗಳು",
+                    'Husband': "ಗಂಡ", 'Wife': "ಹೆಂಡತಿ", 'Brother': "ಸಹೋದರ", 'Sister': "ಸಹೋದರಿ",
+                    'Grandfather': "ಅಜ್ಜ", 'Grandmother': "ಅಜ್ಜಿ", 'Grandson': "ಮೊಮ್ಮಗ", 'Granddaughter': "ಮೊಮ್ಮಗಳು",
+                    'Great-Grandfather': "ಮುತ್ತಜ್ಜ", 'Great-Grandmother': "ಮುತ್ತಜ್ಜಿ", 'Great-Grandson': "ಮರಿಮೊಮ್ಮಗ", 'Great-Granddaughter': "ಮರಿಮೊಮ್ಮಗಳು",
+                    'Uncle': "ಚಿಕ್ಕಪ್ಪ/ಮಾವ", 'Aunt': "ಚಿಕ್ಕಮ್ಮ/ಅತ್ತೆ", 'Nephew': "ಸೋದರಳಿಯ", 'Niece': "ಸೋದರ ಸೊಸೆ", 'Cousin': "ಸೋದರಸಂಬಂಧಿ",
+                    'Father-in-law': "ಮಾವ", 'Mother-in-law': "ಅತ್ತೆ", 'Son-in-law': "ಅಳಿಯ", 'Daughter-in-law': "ಸೊಸೆ",
+                    'Brother-in-law': "ಭಾವ/ಮೈದುನ", 'Sister-in-law': "ಅತ್ತಿಗೆ/ನಾದಿನಿ", 'Step-Father': "ಮಲತಂದೆ", 'Step-Mother': "ಮಲತಾಯಿ",
+                    'Step-Son': "ಮಲಮಗ", 'Step-Daughter': "ಮಲಮಗಳು", 'Half-Brother': "ಮಲಸಹೋದರ", 'Half-Sister': "ಮಲಸಹೋದರಿ",
+                    'Grand-Nephew': "ಮೊಮ್ಮಗ", 'Grand-Niece': "ಮೊಮ್ಮಗಳು", 'Grand-Uncle': "ಅಜ್ಜ", 'Grand-Aunt': "ಅಜ್ಜಿ"
+                }
+            };
+            
+            let dict = relDict[currentLang] || relDict['en'];
+            return dict[englishTerm] || englishTerm;
+        }
+
         function openRishtaModal() {
             let optionsHtml = '';
             function gatherOptions(node) {
@@ -1055,36 +1156,37 @@
             function getPureLineageText(p, c, gender) {
                 if (p === 0 && c === 0) return "Self";
                 if (p === 0) {
-                    if (c === 1) return gender === 'M' ? "Son (पुत्र)" : "Daughter (पुत्री)";
-                    if (c === 2) return gender === 'M' ? "Grandson (पोता/नाती)" : "Granddaughter (पोती/नातिन)";
-                    if (c === 3) return gender === 'M' ? "Great-Grandson (परपोता/परनाती)" : "Great-Granddaughter (परपोती/परनातिन)";
-                    return gender === 'M' ? `${"Great-".repeat(c-2)}Grandson (वंशज)` : `${"Great-".repeat(c-2)}Granddaughter (वंशज)`;
+                    if (c === 1) return getKinshipTerm(gender === 'M' ? 'Son' : 'Daughter');
+                    if (c === 2) return getKinshipTerm(gender === 'M' ? 'Grandson' : 'Granddaughter');
+                    if (c === 3) return getKinshipTerm(gender === 'M' ? 'Great-Grandson' : 'Great-Granddaughter');
+                    return `${"Great-".repeat(c-2)}${getKinshipTerm(gender === 'M' ? 'Grandson' : 'Granddaughter')}`;
                 }
                 if (c === 0) {
-                    if (p === 1) return gender === 'M' ? "Father (पिता)" : "Mother (माता)";
-                    if (p === 2) return gender === 'M' ? "Grandfather (दादा/नाना)" : "Grandmother (दादी/नानी)";
-                    if (p === 3) return gender === 'M' ? "Great-Grandfather (परदादा/परनाना)" : "Great-Grandmother (परदादी/परनानी)";
-                    return gender === 'M' ? `${"Great-".repeat(p-2)}Grandfather (पूर्वज)` : `${"Great-".repeat(p-2)}Grandmother (पूर्वज)`;
+                    if (p === 1) return getKinshipTerm(gender === 'M' ? 'Father' : 'Mother');
+                    if (p === 2) return getKinshipTerm(gender === 'M' ? 'Grandfather' : 'Grandmother');
+                    if (p === 3) return getKinshipTerm(gender === 'M' ? 'Great-Grandfather' : 'Great-Grandmother');
+                    return `${"Great-".repeat(p-2)}${getKinshipTerm(gender === 'M' ? 'Grandfather' : 'Grandmother')}`;
                 }
-                if (p === 1 && c === 1) return gender === 'M' ? "Brother (भाई)" : "Sister (बहन)";
-                if (p === 1 && c === 2) return gender === 'M' ? "Nephew (भतीजा/भांजा)" : "Niece (भतीजी/भांजी)";
-                if (p === 1 && c > 2) return gender === 'M' ? `${"Great-".repeat(c-2)}Nephew (पोता/नाती)` : `${"Great-".repeat(c-2)}Niece (पोती/नातिन)`;
-                if (p === 2 && c === 1) return gender === 'M' ? "Uncle (चाचा/ताऊ/मामा)" : "Aunt (बुआ/मौसी/चाची)";
-                if (p > 2 && c === 1) return gender === 'M' ? `${"Great-".repeat(p-2)}Uncle (दादा/नाना)` : `${"Great-".repeat(p-2)}Aunt (दादी/नानी)`;
+                if (p === 1 && c === 1) return getKinshipTerm(gender === 'M' ? 'Brother' : 'Sister');
+                if (p === 1 && c === 2) return getKinshipTerm(gender === 'M' ? 'Nephew' : 'Niece');
+                if (p === 1 && c > 2) return `${"Great-".repeat(c-2)}${getKinshipTerm(gender === 'M' ? 'Grand-Nephew' : 'Grand-Niece')}`;
+                if (p === 2 && c === 1) return getKinshipTerm(gender === 'M' ? 'Uncle' : 'Aunt');
+                if (p > 2 && c === 1) return `${"Great-".repeat(p-2)}${getKinshipTerm(gender === 'M' ? 'Grand-Uncle' : 'Grand-Aunt')}`;
                 if (p >= 2 && c >= 2) {
                     const degree = Math.min(p, c) - 1; 
                     const removed = Math.abs(p - c);
                     const degreeStr = ["", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th"][degree] || `${degree}th`;
+                    const localizedCousin = getKinshipTerm('Cousin');
                     
                     if (removed === 0) {
-                        return gender === 'M' ? `${degreeStr} Cousin (चचेरा/ममेरा भाई)` : `${degreeStr} Cousin (चचेरी/ममेरी बहन)`;
+                        return `${degreeStr} ${localizedCousin}`;
                     } else {
-                        let hindiRel = "";
-                        if (c - p === 1) hindiRel = gender === 'M' ? "भतीजा/भांजा" : "भतीजी/भांजी";
-                        else if (p - c === 1) hindiRel = gender === 'M' ? "चाचा/ताऊ/मामा" : "बुआ/मौसी/चाची";
-                        else if (c - p >= 2) hindiRel = gender === 'M' ? "पोता/नाती (Grand-Nephew)" : "पोती/नातिन (Grand-Niece)";
-                        else if (p - c >= 2) hindiRel = gender === 'M' ? "दादा/नाना (Grand-Uncle)" : "दादी/नानी (Grand-Aunt)";
-                        return `${degreeStr} Cousin ${removed}x removed (${hindiRel})`;
+                        let localizedSubRel = "";
+                        if (c - p === 1) localizedSubRel = getKinshipTerm(gender === 'M' ? 'Nephew' : 'Niece');
+                        else if (p - c === 1) localizedSubRel = getKinshipTerm(gender === 'M' ? 'Uncle' : 'Aunt');
+                        else if (c - p >= 2) localizedSubRel = getKinshipTerm(gender === 'M' ? 'Grand-Nephew' : 'Grand-Niece');
+                        else if (p - c >= 2) localizedSubRel = getKinshipTerm(gender === 'M' ? 'Grand-Uncle' : 'Grand-Aunt');
+                        return currentLang === 'en' ? `${degreeStr} Cousin ${removed}x removed` : `${degreeStr} Cousin ${removed}x removed (${localizedSubRel})`;
                     }
                 }
                 return null;
@@ -1101,17 +1203,16 @@
                     let purePath = pathArr.slice(0, -1);
                     if (purePath.join('') === expectedPure.replace('Spouse', '')) { 
                         if (pCount === 0 && cCount > 0) {
-                            if (cCount === 1) relationText = targetGender === 'M' ? "Son-in-law (दामाद)" : "Daughter-in-law (बहू)";
-                            else if (cCount === 2) relationText = targetGender === 'M' ? "Grandson-in-law" : "Granddaughter-in-law";
-                            else if (cCount === 3) relationText = targetGender === 'M' ? "Great-Grandson-in-law" : "Great-Granddaughter-in-law";
-                            else relationText = targetGender === 'M' ? `${"Great-".repeat(cCount-2)}Grandson-in-law` : `${"Great-".repeat(cCount-2)}Granddaughter-in-law`;
+                            if (cCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Son-in-law' : 'Daughter-in-law');
+                            else if (cCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandson-in-law":"Granddaughter-in-law") : getKinshipTerm(targetGender === 'M' ? 'Son-in-law' : 'Daughter-in-law');
+                            else relationText = `${"Great-".repeat(cCount-2)} ${getKinshipTerm(targetGender === 'M' ? 'Son-in-law' : 'Daughter-in-law')}`;
                         }
                         else if (pCount > 0 && cCount === 0) {
-                            if (pCount === 1) relationText = targetGender === 'M' ? "Step-Father (सौतेला पिता)" : "Step-Mother (सौतेली माँ)";
+                            if (pCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Step-Father' : 'Step-Mother');
                             else relationText = getPureLineageText(pCount, cCount, targetGender); 
                         }
-                        else if (pCount === 1 && cCount === 1) relationText = targetGender === 'M' ? "Brother-in-law (जीजा/बहनोई)" : "Sister-in-law (भाभी)";
-                        else if (pCount === 2 && cCount === 1) relationText = targetGender === 'M' ? "Uncle (फूफा/मौसा)" : "Aunt (चाची/मामी)";
+                        else if (pCount === 1 && cCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Brother-in-law' : 'Sister-in-law');
+                        else if (pCount === 2 && cCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Uncle' : 'Aunt');
                         else {
                             let baseRel = getPureLineageText(pCount, cCount, targetGender === 'M' ? 'F' : 'M');
                             relationText = `Spouse of ${baseRel}`;
@@ -1122,15 +1223,15 @@
                     let purePath = pathArr.slice(1);
                     if (purePath.join('') === expectedPure.replace('Spouse', '')) {
                         if (pCount > 0 && cCount === 0) {
-                            if (pCount === 1) relationText = targetGender === 'M' ? "Father-in-law (ससुर)" : "Mother-in-law (सास)";
-                            else if (pCount === 2) relationText = targetGender === 'M' ? "Grandfather-in-law (दादा ससुर)" : "Grandmother-in-law (दादी सास)";
-                            else relationText = targetGender === 'M' ? `${"Great-".repeat(pCount-2)}Grandfather-in-law` : `${"Great-".repeat(pCount-2)}Grandmother-in-law`;
+                            if (pCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law');
+                            else if (pCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandfather-in-law":"Grandmother-in-law") : getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law');
+                            else relationText = `${"Great-".repeat(pCount-2)} ${getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law')}`;
                         }
                         else if (pCount === 0 && cCount > 0) {
-                            if (cCount === 1) relationText = targetGender === 'M' ? "Step-Son" : "Step-Daughter";
+                            if (cCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Step-Son' : 'Step-Daughter');
                             else relationText = targetGender === 'M' ? "Step-Grandson" : "Step-Granddaughter";
                         }
-                        else if (pCount === 1 && cCount === 1) relationText = targetGender === 'M' ? "Brother-in-law (साला/देवर/जेठ)" : "Sister-in-law (साली/ननद/जेठानी)";
+                        else if (pCount === 1 && cCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Brother-in-law' : 'Sister-in-law');
                         else {
                             let baseRel = getPureLineageText(pCount, cCount, targetGender);
                             relationText = `Spouse's ${baseRel}`;
@@ -1138,12 +1239,12 @@
                     }
                 } 
                 else {
-                    if (pattern === "ParentSpouseChild") relationText = targetGender === 'M' ? "Half-Brother" : "Half-Sister";
+                    if (pattern === "ParentSpouseChild") relationText = getKinshipTerm(targetGender === 'M' ? 'Half-Brother' : 'Half-Sister');
                 }
             }
 
             if (!relationText) {
-                if(pattern === "Spouse") relationText = targetGender === 'M' ? "Husband (पति)" : "Wife (पत्नी)";
+                if(pattern === "Spouse") relationText = getKinshipTerm(targetGender === 'M' ? 'Husband' : 'Wife');
                 else relationText = `Distant Relative (${pathArr.join(' -> ')})`;
             }
 
@@ -1185,7 +1286,7 @@
         }
 
         function exportCSV() {
-            let csvRows = ["Name,Hindi Name,Gender,Status,DOB,DOD,Gotra,Generation,Parent Name,Spouse(s)"];
+            let csvRows = ["Name,Local Script Name,Gender,Status,DOB,DOD,Gotra,Generation,Parent Name,Spouse(s)"];
             function escapeCSV(str) { if(!str) return ''; str = str.replace(/"/g, '""'); return `"${str}"`; }
             function traverseCSV(node, depth, parentName) {
                 let spousesStr = node.spouses.map(s => s.name).join(' & ');
