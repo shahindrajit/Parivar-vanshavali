@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Hindu Bansawali Builder V11.2</title>
+    <title>Enterprise Hindu Bansawali Builder V11.3</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -166,8 +166,8 @@
         .dates-list div { padding: 4px 0; border-bottom: 1px dashed var(--border-color);}
         .dates-list div:last-child { border-bottom: none; }
         
-        #rishtaResult { text-align: center; margin-top: 20px; padding: 15px; background: var(--input-bg); border: 2px solid var(--saffron); border-radius: 8px; font-weight: bold; font-size: 15px; display: none; transition: 0.3s;}
-        body.dark-mode #rishtaResult { color: #A5D6A7; }
+        #rishtaResult { text-align: center; margin-top: 20px; padding: 15px; background: var(--input-bg); border: 2px solid var(--saffron); border-radius: 8px; font-size: 16px; display: none; transition: 0.3s;}
+        body.dark-mode #rishtaResult { color: #F0EAD6; }
 
         #toast { visibility: hidden; min-width: 250px; background-color: var(--maroon); color: #fff; text-align: center; border-radius: 4px; padding: 12px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); font-weight: bold; border: 1px solid var(--saffron);}
         body.dark-mode #toast { background-color: var(--input-bg); color: var(--text-main); }
@@ -241,7 +241,7 @@
             </div>
             
             <button class="btn btn-action" onclick="addRootAncestor()"><span data-i18n="add_ancestor">+ Ancestor</span></button>
-            <button class="btn btn-danger" onclick="resetTree()" title="Start a fresh tree">🔄 Reset</button>
+            <button class="btn btn-danger" onclick="resetTree()" title="Start a fresh tree">🔄 <span data-i18n="reset">Reset</span></button>
             
             <button class="btn" onclick="generateShareLink()"><span data-i18n="share">🔗 Share</span></button>
             <button class="btn" onclick="document.getElementById('importFile').click()"><span data-i18n="import">📂 Import</span></button>
@@ -416,7 +416,9 @@
                 deceased_stat: "Deceased", dates_rem: "🗓️ Dates to Remember", rishta_title: "🔗 Rishta (Kinship) Calculator",
                 rishta_sub: "Find how two family members are related.", person1: "Person 1 (Start)", person2: "Person 2 (End)",
                 find_rel: "Find Relationship", my_trees: "My Trees:", relation: "Relation", married: "Married", divorced: "Divorced",
-                gen_all: "👁️ View All Gens", gen_hl: "Highlight Gen"
+                gen_all: "👁️ View All Gens", gen_hl: "Highlight Gen", reset: "Reset",
+                confirm_reset: "Are you sure you want to COMPLETELY WIPE this tree? This will erase all members and reset your Family Identity.",
+                tree_reset: "Tree has been completely reset."
             },
             hi: {
                 about: "परिचय", about_desc: "परिवारों के लिए अपनी समृद्ध विरासत को खूबसूरती से दस्तावेज़ित करने, खोजने और संरक्षित करने के लिए विकसित किया गया।", about_contact: "क्या आपके पास सुझाव, सुविधा अनुरोध या कोई बग मिला है? बेझिझक संपर्क करें!",
@@ -435,7 +437,9 @@
                 deceased_stat: "स्वर्गीय", dates_rem: "🗓️ याद रखने योग्य तिथियां", rishta_title: "🔗 रिश्ता कैलकुलेटर",
                 rishta_sub: "पता करें कि दो परिवार के सदस्य कैसे संबंधित हैं।", person1: "व्यक्ति 1", person2: "व्यक्ति 2",
                 find_rel: "रिश्ता खोजें", my_trees: "मेरे पेड़:", relation: "रिश्ता", married: "विवाहित", divorced: "तलाकशुदा",
-                gen_all: "👁️ सभी पीढ़ियाँ", gen_hl: "पीढ़ी हाइलाइट करें"
+                gen_all: "👁️ सभी पीढ़ियाँ", gen_hl: "पीढ़ी हाइलाइट करें", reset: "रीसेट",
+                confirm_reset: "क्या आप वाकई इस पेड़ को पूरी तरह से मिटाना चाहते हैं? यह सभी सदस्यों और पहचान को हटा देगा।",
+                tree_reset: "पेड़ को डिफ़ॉल्ट पर रीसेट कर दिया गया है।"
             },
             ta: {
                 about: "பற்றி", about_desc: "குடும்பங்கள் தங்கள் வளமான பாரம்பரியத்தை ஆவணப்படுத்தவும் பாதுகாக்கவும் வடிவமைக்கப்பட்டுள்ளது.", about_contact: "பரிந்துரைகள் உள்ளதா? எங்களை தொடர்பு கொள்ளவும்!",
@@ -454,7 +458,9 @@
                 deceased_stat: "காலமானவர்", dates_rem: "🗓️ நினைவில் கொள்ள வேண்டிய தேதிகள்", rishta_title: "🔗 உறவு கால்குலேட்டர்",
                 rishta_sub: "இரண்டு குடும்ப உறுப்பினர்கள் எவ்வாறு தொடர்புடையவர்கள் என்பதைக் கண்டறியவும்.", person1: "நபர் 1", person2: "நபர் 2",
                 find_rel: "உறவைக் கண்டுபிடி", my_trees: "என் குடும்ப மரங்கள்:", relation: "உறவு", married: "திருமணமானவர்", divorced: "விவாகரத்து பெற்றவர்",
-                gen_all: "👁️ அனைத்து தலைமுறைகள்", gen_hl: "தலைமுறை ஹைலைட்"
+                gen_all: "👁️ அனைத்து தலைமுறைகள்", gen_hl: "தலைமுறை ஹைலைட்", reset: "மீட்டமை",
+                confirm_reset: "இந்த மரத்தை முழுமையாக அழிக்க விரும்புகிறீர்களா? இது அனைத்தையும் அழித்துவிடும்.",
+                tree_reset: "மரம் இயல்புநிலைக்கு மீட்டமைக்கப்பட்டது."
             },
             kn: {
                 about: "ಬಗ್ಗೆ", about_desc: "ಕುಟುಂಬಗಳು ತಮ್ಮ ಶ್ರೀಮಂತ ಪರಂಪರೆಯನ್ನು ದಾಖಲಿಸಲು ಮತ್ತು ಸಂರಕ್ಷಿಸಲು ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ.", about_contact: "ಸಲಹೆಗಳಿವೆಯೇ? ದಯವಿಟ್ಟು ಸಂಪರ್ಕಿಸಿ!",
@@ -473,7 +479,9 @@
                 deceased_stat: "ಮೃತಪಟ್ಟಿದ್ದಾರೆ", dates_rem: "🗓️ ನೆನಪಿಡಬೇಕಾದ ದಿನಾಂಕಗಳು", rishta_title: "🔗 ಸಂಬಂಧ ಕ್ಯಾಲ್ಕುಲೇಟರ್",
                 rishta_sub: "ಇಬ್ಬರು ಕುಟುಂಬ ಸದಸ್ಯರು ಹೇಗೆ ಸಂಬಂಧ ಹೊಂದಿದ್ದಾರೆ ಎಂಬುದನ್ನು ಕಂಡುಕೊಳ್ಳಿ.", person1: "ವ್ಯಕ್ತಿ 1", person2: "ವ್ಯಕ್ತಿ 2",
                 find_rel: "ಸಂಬಂಧವನ್ನು ಹುಡುಕಿ", my_trees: "ನನ್ನ ಮರಗಳು:", relation: "ಸಂಬಂಧ", married: "ವಿವಾಹಿತ", divorced: "ವಿಚ್ಛೇದಿತ",
-                gen_all: "👁️ ಎಲ್ಲಾ ತಲೆಮಾರುಗಳು", gen_hl: "ತಲೆಮಾರು ಹೈಲೈಟ್"
+                gen_all: "👁️ ಎಲ್ಲಾ ತಲೆಮಾರುಗಳು", gen_hl: "ತಲೆಮಾರು ಹೈಲೈಟ್", reset: "ಮರುಹೊಂದಿಸಿ",
+                confirm_reset: "ನೀವು ಖಂಡಿತವಾಗಿಯೂ ಈ ಮರವನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಅಳಿಸಲು ಬಯಸುತ್ತೀರಾ? ಇದು ಎಲ್ಲವನ್ನೂ ಅಳಿಸುತ್ತದೆ.",
+                tree_reset: "ಮರವನ್ನು ಡೀಫಾಲ್ಟ್‌ಗೆ ಮರುಹೊಂದಿಸಲಾಗಿದೆ."
             }
         };
 
@@ -626,7 +634,6 @@
             pushHistory(true); renderTree(); resetZoom();
         }
 
-        // CRITICAL V11.2 FIX: Safe JSON Migration to prevent crashes on bad files
         function migrateData(node) {
             if (!node || typeof node !== 'object') return null;
             if (!node.id) node.id = generateUUID();
@@ -668,6 +675,22 @@
             };
         }
 
+        // V11.3: Restored and enhanced Reset Function
+        function resetTree() {
+            if (confirm(t('confirm_reset'))) {
+                familyData = generateDefaultTree();
+                
+                // Also wipe the family identity
+                appConfig = { title: "Shri Parivar Bansawali", deity: "", origin: "" };
+                saveSettings(); // Saves identity to local storage and updates header
+                
+                pushHistory(); 
+                renderTree(); 
+                resetZoom(); 
+                showToast(t('tree_reset'));
+            }
+        }
+
         function initApp() {
             checkAndMigrateOldData();
             updateTreeDropdown();
@@ -686,7 +709,6 @@
                     history.replaceState(null, '', window.location.pathname + window.location.search);
                     showToast("Shared tree loaded! Edits will save locally.");
                     
-                    // Automatically save the loaded link to the active tree
                     localStorage.setItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
                     let tIndex = treeRegistry.findIndex(t => t.id === activeTreeId);
                     if(tIndex > -1) { 
@@ -1257,7 +1279,7 @@
                     if (purePath.join('') === expectedPure.replace('Spouse', '')) {
                         if (pCount > 0 && cCount === 0) {
                             if (pCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law');
-                            else if (pCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandfather-in-law":"Grandmother-in-law") : getKinshipTerm(targetGender === 'M' ? 'Grandfather-in-law' : 'Grandmother-in-law');
+                            else if (pCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandfather-in-law":"Grandmother-in-law") : getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law');
                             else relationText = `${"Great-".repeat(pCount-2)} ${getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law')}`;
                         }
                         else if (pCount === 0 && cCount > 0) {
@@ -1281,7 +1303,6 @@
                 else relationText = `Distant Relative (${pathArr.join(' -> ')})`;
             }
 
-            // CRITICAL FIX: Safe, direct grammar string assignment
             let startName = graph[startId].name;
             let endName = graph[endId].name;
             let text = "";
@@ -1315,7 +1336,6 @@
             const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${appConfig.title.replace(/\s+/g, '_')}_Backup.json`; a.click(); URL.revokeObjectURL(url);
         }
 
-        // CRITICAL FIX 11.2: Bulletproof JSON Import
         function importJSON(event) {
             const file = event.target.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = function(e) {
