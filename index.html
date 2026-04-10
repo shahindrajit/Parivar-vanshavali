@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Hindu Bansawali Builder V11.3</title>
+    <title>Enterprise Hindu Bansawali Builder V12.0</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -45,28 +45,37 @@
 
         .tree-selector-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 6px;}
         
-        #upcoming-banner { display:none; background: var(--gold); color: #000; padding: 5px 15px; font-size: 13px; border-bottom: 1px solid var(--maroon); z-index: 99; position: relative; font-weight: 500;}
+        /* V12: ACCESSIBLE CSS MARQUEE */
+        #upcoming-banner { display:none; background: var(--gold); color: #000; font-size: 13px; border-bottom: 1px solid var(--maroon); z-index: 99; position: relative; font-weight: 500; overflow: hidden; white-space: nowrap; padding: 5px 0;}
         body.dark-mode #upcoming-banner { background: #5C3A21; color: #FADBB8; border-color: #222; }
+        .marquee-content { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; }
+        @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        .toolbar-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex-grow: 1; justify-content: flex-end;}
-        .btn { padding: 6px 10px; border: 1px solid var(--saffron); border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; background-color: transparent; color: white; font-size: 12px; white-space: nowrap; display: flex; align-items: center; gap: 5px;}
+        /* V12: MOBILE RESPONSIVE SCROLLABLE TOOLBAR */
+        .toolbar-controls { display: flex; gap: 8px; align-items: center; flex-grow: 1; justify-content: flex-end; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 5px; scrollbar-width: none; }
+        .toolbar-controls::-webkit-scrollbar { display: none; }
+        
+        .btn { padding: 6px 10px; border: 1px solid var(--saffron); border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; background-color: transparent; color: white; font-size: 12px; white-space: nowrap; display: flex; align-items: center; gap: 5px; flex-shrink: 0;}
         .btn:hover { background-color: var(--saffron); color: #800000; }
         .btn-action { background-color: var(--saffron); color: #800000; }
         .btn-action:hover { background-color: #e68a00; }
         .btn-danger { background-color: #d32f2f; color: white; border-color: #d32f2f; }
         .btn-danger:hover { background-color: #b71c1c; color: white; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-        .btn-group { display: flex; gap: 0; }
+        .btn-group { display: flex; gap: 0; flex-shrink: 0;}
         .btn-group .btn { border-radius: 0; border-right: none; }
         .btn-group .btn:first-child { border-radius: 4px 0 0 4px; }
         .btn-group .btn:last-child { border-radius: 0 4px 4px 0; border-right: 1px solid var(--saffron); }
         select.btn { background-color: var(--maroon); color: white; outline: none; transition: 0.3s;}
         select.btn option { background-color: var(--input-bg); color: var(--text-main); }
+        
+        .search-input { background: rgba(255,255,255,0.9); border: 1px solid var(--saffron); border-radius: 4px; padding: 6px 10px; font-size: 12px; outline: none; width: 150px; flex-shrink: 0; color: #333;}
+        body.dark-mode .search-input { background: var(--input-bg); color: var(--text-main); }
 
         /* Canvas & Gridlines */
         #canvas-wrapper { flex-grow: 1; width: 100vw; cursor: grab; position: relative; overflow: hidden; touch-action: none; }
         #canvas-wrapper:active { cursor: grabbing; }
-        #tree-container { position: absolute; transform-origin: 0 0; padding: 50px 100px; min-width: max-content; transition: opacity 0.3s; }
+        #tree-container { position: absolute; transform-origin: 0 0; padding: 80px 100px; min-width: max-content; transition: opacity 0.3s; }
 
         .gen-axis-line { position: absolute; left: 0; width: 100%; border-top: 2px dashed rgba(212, 175, 55, 0.4); z-index: 0; pointer-events: none; }
         .gen-axis-label { position: absolute; left: 20px; top: -10px; color: var(--saffron); font-weight: bold; opacity: 0.8; font-size: 12px; text-transform: uppercase; background: var(--bg-warm); padding: 0 10px; border-radius: 4px; transition: 0.3s;}
@@ -108,6 +117,9 @@
         .node-box:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.25);}
         .node-box.dimmed-node { opacity: 0.25; filter: grayscale(80%); box-shadow: none; border-color: #555; }
         .node-box.dimmed-node:hover { opacity: 1; filter: grayscale(0%); border-color: var(--saffron); }
+        
+        /* V12: Search Highlight */
+        .node-box.highlighted-search { box-shadow: 0 0 0 4px var(--saffron), 0 0 20px var(--saffron) !important; transform: scale(1.05); z-index: 10; }
 
         .node-name { font-weight: bold; font-size: 15px; margin-bottom: 2px; }
         .node-hindi { font-size: 13px; color: var(--saffron); font-weight: bold; margin-bottom: 4px; }
@@ -156,7 +168,7 @@
         .btn-delete { background-color: #d32f2f; margin-top: 25px; }
         .btn-focus { background-color: #1976D2; margin-top: 10px; }
         
-        /* Stats Dashboard & Rishta Calc Styles */
+        /* Stats & Export Modals */
         .stat-card { background: var(--input-bg); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color); flex: 1; min-width: 100px; transition: 0.3s;}
         .stat-card h2 { margin: 0; font-size: 28px; color: var(--maroon); }
         body.dark-mode .stat-card h2 { color: var(--gold); }
@@ -166,20 +178,25 @@
         .dates-list div { padding: 4px 0; border-bottom: 1px dashed var(--border-color);}
         .dates-list div:last-child { border-bottom: none; }
         
-        #rishtaResult { text-align: center; margin-top: 20px; padding: 15px; background: var(--input-bg); border: 2px solid var(--saffron); border-radius: 8px; font-size: 16px; display: none; transition: 0.3s;}
+        #rishtaResult { text-align: center; margin-top: 20px; padding: 15px; background: var(--input-bg); border: 2px solid var(--saffron); border-radius: 8px; font-size: 15px; display: none; transition: 0.3s;}
         body.dark-mode #rishtaResult { color: #F0EAD6; }
+        
+        /* Tooltip */
+        #onboarding-tooltip { display:none; position:absolute; z-index:90; background:var(--maroon); color:white; padding:10px 15px; border-radius:8px; border:2px solid var(--saffron); box-shadow:0 4px 10px rgba(0,0,0,0.5); pointer-events:none; font-weight:bold; font-size:14px; animation: pulse 2s infinite; }
+        #onboarding-tooltip::before { content:''; position:absolute; top:-10px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-bottom:10px solid var(--saffron); }
 
         #toast { visibility: hidden; min-width: 250px; background-color: var(--maroon); color: #fff; text-align: center; border-radius: 4px; padding: 12px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); font-weight: bold; border: 1px solid var(--saffron);}
         body.dark-mode #toast { background-color: var(--input-bg); color: var(--text-main); }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
         
-        /* Contact Links */
         .contact-link { text-decoration: none; color: white; padding: 8px 15px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block; transition: 0.2s;}
         .contact-link:hover { opacity: 0.8; }
         .bg-linkedin { background: #0077b5; }
         .bg-email { background: var(--maroon); }
+        .export-btn { width: 100%; text-align: left; margin-bottom: 8px; padding: 15px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-main); border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s;}
+        .export-btn:hover { background: var(--bg-warm); border-color: var(--saffron); }
 
-        /* Print Overrides */
+        /* V12: Safe Print Mode */
         @media print { 
             .toolbar, .zoom-controls, #clear-focus-btn, .modal, #toast, #upcoming-banner { display: none !important; } 
             #canvas-wrapper { overflow: visible !important; height: auto !important; } 
@@ -189,6 +206,7 @@
         
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -215,18 +233,14 @@
         </div>
 
         <div class="toolbar-controls">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search Name..." data-i18n="search_placeholder" oninput="searchTree(this.value)">
+
             <select class="btn" id="langSelector" onchange="changeLanguage(this.value)" style="background: var(--saffron); color: var(--maroon);">
                 <option value="en">🌐 English</option>
                 <option value="hi">🌐 हिन्दी</option>
                 <option value="ta">🌐 தமிழ்</option>
                 <option value="kn">🌐 ಕನ್ನಡ</option>
             </select>
-            
-            <button class="btn" onclick="openAboutModal()">ℹ️ <span data-i18n="about">About</span></button>
-            <button class="btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Dark Mode"><span data-i18n="theme_dark">🌙 Theme</span></button>
-            
-            <button class="btn" onclick="openRishtaModal()"><span data-i18n="rishta_calc">🔗 Rishta Calc</span></button>
-            <button class="btn" onclick="openInsightsModal()"><span data-i18n="insights">📊 Insights</span></button>
             
             <select id="highlightGen" class="btn" onchange="applyGenHighlight()"></select>
 
@@ -240,17 +254,18 @@
                 <button class="btn" id="btnRedo" onclick="redo()" disabled>↪</button>
             </div>
             
+            <button class="btn" onclick="openRishtaModal()"><span data-i18n="rishta_calc">🔗 Rishta</span></button>
+            <button class="btn" onclick="openInsightsModal()"><span data-i18n="insights">📊 Insights</span></button>
             <button class="btn btn-action" onclick="addRootAncestor()"><span data-i18n="add_ancestor">+ Ancestor</span></button>
             <button class="btn btn-danger" onclick="resetTree()" title="Start a fresh tree">🔄 <span data-i18n="reset">Reset</span></button>
             
             <button class="btn" onclick="generateShareLink()"><span data-i18n="share">🔗 Share</span></button>
-            <button class="btn" onclick="document.getElementById('importFile').click()"><span data-i18n="import">📂 Import</span></button>
             <input type="file" id="importFile" style="display:none" accept=".json" onchange="importJSON(event)">
             
-            <button class="btn" onclick="exportJSON()"><span data-i18n="export_json">💾 JSON</span></button>
-            <button class="btn" onclick="exportCSV()"><span data-i18n="export_csv">📄 CSV</span></button>
-            <button class="btn" onclick="exportJPG(event)"><span data-i18n="export_jpg">🖼️ JPG</span></button>
-            <button class="btn" onclick="exportHorizontalPDF(event)"><span data-i18n="export_pdf">📄 PDF</span></button>
+            <button class="btn" onclick="openExportModal()" style="background: #1976D2;"><span data-i18n="export_menu">⬇️ Export / Backup</span></button>
+            
+            <button class="btn" onclick="toggleTheme()" id="themeBtn" title="Toggle Dark Mode"><span data-i18n="theme_dark">🌙 Theme</span></button>
+            <button class="btn" onclick="openAboutModal()">ℹ️ <span data-i18n="about">About</span></button>
         </div>
     </div>
     
@@ -267,10 +282,30 @@
             <div id="tree-root"></div>
         </div>
         
+        <div id="onboarding-tooltip" data-i18n="onboarding_tip">👆 Click the Root Ancestor to start building your tree!</div>
+
         <div class="zoom-controls">
             <div class="zoom-btn" onclick="adjustZoom(0.15)">+</div>
             <div class="zoom-btn" onclick="adjustZoom(-0.15)">-</div>
             <div class="zoom-btn" onclick="resetZoom()" style="font-size: 16px;">🔄</div>
+        </div>
+    </div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('exportModal')">&times;</span>
+            <h3 style="margin-top:0; color:var(--maroon)" data-i18n="export_menu">⬇️ Export / Backup Options</h3>
+            
+            <div class="section-title" data-i18n="safe_backups">Safe Backups & Data</div>
+            <button class="export-btn" onclick="exportJSON()">💾 <span data-i18n="export_json">Download JSON Backup (Safe Restore)</span></button>
+            <button class="export-btn" onclick="exportCSV()">📄 <span data-i18n="export_csv">Download CSV (Excel Data)</span></button>
+            <button class="export-btn" onclick="document.getElementById('importFile').click()" style="background:var(--bg-warm);">📂 <span data-i18n="import">Import / Restore JSON</span></button>
+            
+            <div class="section-title" style="margin-top: 20px;" data-i18n="visual_exports">Visual Chart Exports</div>
+            <button class="export-btn" id="btnExport2x" onclick="executeExport('png', 2)">🖼️ <span data-i18n="exp_screen">Screen Quality PNG (2x - Best for WhatsApp)</span></button>
+            <button class="export-btn" id="btnExport5x" onclick="executeExport('png', 5)">🖼️ <span data-i18n="exp_print">Print Quality PNG (5x - Best for A3 Posters)</span></button>
+            <button class="export-btn" id="btnExport8x" onclick="executeExport('png', 8)" style="border-color: #d32f2f;">🌟 <span data-i18n="exp_banner">Banner Quality PNG (8x - Massive Flex Print) ⚠️ High RAM</span></button>
+            <button class="export-btn" id="btnExportPDF" onclick="executeExport('pdf', 3)">📄 <span data-i18n="exp_pdf">A4 PDF (Multi-page grid for desk printers)</span></button>
         </div>
     </div>
 
@@ -324,8 +359,8 @@
             </div>
 
             <div class="flex-row" style="margin-top: 10px;">
-                <div class="form-group"><label data-i18n="dob">Birth (Date/Year)</label><input type="text" id="editDOB" placeholder="DD/MM/YYYY or YYYY"></div>
-                <div class="form-group" id="deathDateGroup" style="display:none;"><label data-i18n="dod">Death (Date/Year)</label><input type="text" id="editDOD" placeholder="DD/MM/YYYY or YYYY"></div>
+                <div class="form-group"><label data-i18n="dob">Birth (DD/MM/YYYY)</label><input type="text" id="editDOB" placeholder="DD/MM/YYYY or YYYY"></div>
+                <div class="form-group" id="deathDateGroup" style="display:none;"><label data-i18n="dod">Death (DD/MM/YYYY)</label><input type="text" id="editDOD" placeholder="DD/MM/YYYY or YYYY"></div>
             </div>
             
             <div class="flex-row" style="margin-top: 10px;">
@@ -381,9 +416,9 @@
             <span class="close" onclick="closeModal('rishtaModal')">&times;</span>
             <h3 style="margin-top:0; color:var(--maroon)" data-i18n="rishta_title">🔗 Rishta (Kinship) Calculator</h3>
             <p style="font-size: 13px; opacity:0.8;" data-i18n="rishta_sub">Find how two family members are related.</p>
-            <div class="form-group"><label data-i18n="person1">Person 1 (Start)</label><select id="rishtaStart"></select></div>
+            <div class="form-group"><label data-i18n="person1">Person 1 (Start)</label><select id="rishtaStart" onchange="calculateRishta()"></select></div>
             <div style="text-align: center; margin: 10px 0; color: var(--saffron); font-size: 20px;">↕</div>
-            <div class="form-group"><label data-i18n="person2">Person 2 (End)</label><select id="rishtaEnd"></select></div>
+            <div class="form-group"><label data-i18n="person2">Person 2 (End)</label><select id="rishtaEnd" onchange="calculateRishta()"></select></div>
             <button class="modal-btn btn-action" onclick="calculateRishta()" data-i18n="find_rel">Find Relationship</button>
             <div id="rishtaResult"></div>
         </div>
@@ -392,23 +427,54 @@
     <div id="toast">Message</div>
 
     <script>
-        // --- 1. UTILITIES & i18n ---
+        // --- 1. UTILITIES, ERROR GUARDS & i18n ---
         function generateUUID() { return 'node-' + Math.random().toString(36).substring(2, 11) + '-' + Date.now(); }
         function sanitize(str) { if (!str) return ''; return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match])); }
         function showToast(msg) { const toast = document.getElementById("toast"); toast.innerText = msg; toast.className = "show"; setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000); }
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); } });
+        
+        // V12: Safe Parsing to prevent Top-Level Crashes
+        function safeParseJSON(key, fallback) {
+            try { const val = localStorage.getItem(key); return val ? JSON.parse(val) : fallback; } 
+            catch (e) { console.warn(`Error parsing ${key}:`, e); return fallback; }
+        }
+        
+        // V12: Safe Save with Quota Check
+        function safeSetItem(key, value) {
+            try { localStorage.setItem(key, value); return true; } 
+            catch (e) {
+                if (e.name === 'QuotaExceededError' || e.code === 22) {
+                    alert("⚠️ Storage Limit Reached! Cannot save changes. Please export a JSON backup immediately to prevent data loss, then delete old trees from 'My Trees'.");
+                }
+                return false;
+            }
+        }
+
+        // V12: Global Keyboard Shortcuts (ESC & Undo/Redo/Search)
+        document.addEventListener('keydown', (e) => { 
+            if (e.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); } 
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); redo(); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') { 
+                e.preventDefault(); 
+                const s = document.getElementById('searchInput'); 
+                if(s) { s.focus(); s.select(); }
+            }
+        });
 
         const i18nDict = {
             en: {
                 about: "About", about_desc: "Designed and developed for families to beautifully document, explore, and preserve their rich heritage.", about_contact: "Have suggestions, feature requests, or found a bug? Feel free to reach out!",
-                theme_dark: "🌙 Theme", theme_light: "☀️ Light", rishta_calc: "🔗 Rishta Calc", insights: "📊 Insights",
-                add_ancestor: "+ Ancestor", share: "🔗 Share", import: "📂 Import", export_json: "💾 JSON",
-                export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ Exit Focus Lineage Mode",
+                theme_dark: "🌙 Theme", theme_light: "☀️ Light", rishta_calc: "🔗 Rishta", insights: "📊 Insights",
+                add_ancestor: "+ Ancestor", share: "🔗 Share", import: "📂 Import JSON", export_json: "Download JSON Backup",
+                export_csv: "Download CSV (Excel)", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ Exit Focus Lineage Mode",
+                export_menu: "⬇️ Export / Backup", safe_backups: "Safe Backups & Data", visual_exports: "Visual Chart Exports",
+                exp_screen: "Screen Quality PNG (2x - Best for WhatsApp)", exp_print: "Print Quality PNG (5x - Best for A3 Posters)",
+                exp_banner: "Banner Quality PNG (8x - Massive Flex Print) ⚠️ High RAM", exp_pdf: "A4 PDF (Multi-page grid for desk printers)",
                 modal_identity: "⚙️ Family Identity", identity_sub: "These sacred details will appear on all your printed charts.",
                 family_title: "Family Title", deity: "Kuldevta / Kuldevi (Deity)", origin: "Mool Niwas (Ancestral Origin)",
                 save_identity: "Save Identity", modal_profile: "Member Profile", focus_btn: "🎯 View Isolated Branch (Focus Lineage)",
                 primary_info: "Primary Info", name_en: "Name (English)", name_local: "Name (Local Script)", trans_btn: "A→अ", gender: "Gender",
-                status: "Status", dob: "Birth (Date/Year)", dod: "Death (Date/Year)", gotra: "Gotra", bio_mother: "Biological Mother",
+                status: "Status", dob: "Birth (DD/MM/YYYY)", dod: "Death (DD/MM/YYYY)", gotra: "Gotra", bio_mother: "Biological Mother",
                 spouse_details: "Spouse Details", add_spouse: "+ Add Spouse", hist_notes: "Historical Notes", save_profile: "Save Profile",
                 add_descendant: "Add Descendant", child_name: "Child Name (Eng)", son_m: "Son (M)", daughter_f: "Daughter (F)",
                 add_btn: "+ Add", delete_branch: "⚠️ Delete Branch", male: "Male", female: "Female", living: "Living", deceased: "Deceased",
@@ -416,20 +482,24 @@
                 deceased_stat: "Deceased", dates_rem: "🗓️ Dates to Remember", rishta_title: "🔗 Rishta (Kinship) Calculator",
                 rishta_sub: "Find how two family members are related.", person1: "Person 1 (Start)", person2: "Person 2 (End)",
                 find_rel: "Find Relationship", my_trees: "My Trees:", relation: "Relation", married: "Married", divorced: "Divorced",
-                gen_all: "👁️ View All Gens", gen_hl: "Highlight Gen", reset: "Reset",
-                confirm_reset: "Are you sure you want to COMPLETELY WIPE this tree? This will erase all members and reset your Family Identity.",
+                gen_all: "👁️ View All Gens", gen_hl: "Highlight Gen", reset: "Reset", search_placeholder: "🔍 Search Name...",
+                onboarding_tip: "👆 Click the Root Ancestor to start building your tree!",
+                confirm_reset: "Delete this tree and all descendants? You can Undo (↩) immediately after if needed.",
                 tree_reset: "Tree has been completely reset."
             },
             hi: {
                 about: "परिचय", about_desc: "परिवारों के लिए अपनी समृद्ध विरासत को खूबसूरती से दस्तावेज़ित करने, खोजने और संरक्षित करने के लिए विकसित किया गया।", about_contact: "क्या आपके पास सुझाव, सुविधा अनुरोध या कोई बग मिला है? बेझिझक संपर्क करें!",
-                theme_dark: "🌙 डार्क मोड", theme_light: "☀️ लाइट", rishta_calc: "🔗 रिश्ता खोजें", insights: "📊 आंकड़े",
-                add_ancestor: "+ पूर्वज जोड़ें", share: "🔗 साझा करें", import: "📂 आयात", export_json: "💾 JSON",
-                export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ फोकस मोड बंद करें",
+                theme_dark: "🌙 डार्क मोड", theme_light: "☀️ लाइट", rishta_calc: "🔗 रिश्ता", insights: "📊 आंकड़े",
+                add_ancestor: "+ पूर्वज जोड़ें", share: "🔗 साझा करें", import: "📂 आयात", export_json: "JSON बैकअप डाउनलोड करें",
+                export_csv: "CSV (Excel) डाउनलोड करें", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ फोकस मोड बंद करें",
+                export_menu: "⬇️ डाउनलोड / बैकअप", safe_backups: "सुरक्षित बैकअप और डेटा", visual_exports: "चार्ट डाउनलोड करें",
+                exp_screen: "स्क्रीन क्वालिटी PNG (2x - WhatsApp के लिए)", exp_print: "प्रिंट क्वालिटी PNG (5x - A3 पोस्टर के लिए)",
+                exp_banner: "बैनर क्वालिटी PNG (8x - फ्लेक्स प्रिंट) ⚠️ High RAM", exp_pdf: "A4 PDF (मल्टी-पेज डेस्क प्रिंटर के लिए)",
                 modal_identity: "⚙️ पारिवारिक पहचान", identity_sub: "ये विवरण आपके प्रिंट किए गए चार्ट पर दिखाई देंगे।",
                 family_title: "परिवार का शीर्षक", deity: "कुलदेवता / कुलदेवी", origin: "मूल निवास",
                 save_identity: "पहचान सहेजें", modal_profile: "सदस्य प्रोफ़ाइल", focus_btn: "🎯 केवल इस शाखा को देखें",
                 primary_info: "प्राथमिक जानकारी", name_en: "नाम (अंग्रेजी)", name_local: "नाम (हिंदी)", trans_btn: "A→अ", gender: "लिंग",
-                status: "स्थिति", dob: "जन्म (तिथि/वर्ष)", dod: "मृत्यु (तिथि/वर्ष)", gotra: "गोत्र", bio_mother: "जैविक माता",
+                status: "स्थिति", dob: "जन्म (DD/MM/YYYY)", dod: "मृत्यु (DD/MM/YYYY)", gotra: "गोत्र", bio_mother: "जैविक माता",
                 spouse_details: "जीवनसाथी का विवरण", add_spouse: "+ जीवनसाथी जोड़ें", hist_notes: "ऐतिहासिक नोट्स", save_profile: "प्रोफ़ाइल सहेजें",
                 add_descendant: "वंशज जोड़ें", child_name: "बच्चे का नाम (अंग्रेजी)", son_m: "पुत्र (M)", daughter_f: "पुत्री (F)",
                 add_btn: "+ जोड़ें", delete_branch: "⚠️ सदस्य हटाएं", male: "पुरुष", female: "महिला", living: "जीवित", deceased: "स्वर्गीय",
@@ -437,41 +507,49 @@
                 deceased_stat: "स्वर्गीय", dates_rem: "🗓️ याद रखने योग्य तिथियां", rishta_title: "🔗 रिश्ता कैलकुलेटर",
                 rishta_sub: "पता करें कि दो परिवार के सदस्य कैसे संबंधित हैं।", person1: "व्यक्ति 1", person2: "व्यक्ति 2",
                 find_rel: "रिश्ता खोजें", my_trees: "मेरे पेड़:", relation: "रिश्ता", married: "विवाहित", divorced: "तलाकशुदा",
-                gen_all: "👁️ सभी पीढ़ियाँ", gen_hl: "पीढ़ी हाइलाइट करें", reset: "रीसेट",
-                confirm_reset: "क्या आप वाकई इस पेड़ को पूरी तरह से मिटाना चाहते हैं? यह सभी सदस्यों और पहचान को हटा देगा।",
+                gen_all: "👁️ सभी पीढ़ियाँ", gen_hl: "पीढ़ी हाइलाइट करें", reset: "रीसेट", search_placeholder: "🔍 नाम खोजें...",
+                onboarding_tip: "👆 अपना पेड़ बनाना शुरू करने के लिए मूल पूर्वज पर क्लिक करें!",
+                confirm_reset: "क्या आप इस पेड़ को हटाना चाहते हैं? यदि आवश्यक हो तो आप तुरंत पूर्ववत (Undo) कर सकते हैं।",
                 tree_reset: "पेड़ को डिफ़ॉल्ट पर रीसेट कर दिया गया है।"
             },
             ta: {
                 about: "பற்றி", about_desc: "குடும்பங்கள் தங்கள் வளமான பாரம்பரியத்தை ஆவணப்படுத்தவும் பாதுகாக்கவும் வடிவமைக்கப்பட்டுள்ளது.", about_contact: "பரிந்துரைகள் உள்ளதா? எங்களை தொடர்பு கொள்ளவும்!",
-                theme_dark: "🌙 டார்க் மோட்", theme_light: "☀️ லைட்", rishta_calc: "🔗 உறவு கால்குலேட்டர்", insights: "📊 புள்ளிவிவரங்கள்",
-                add_ancestor: "+ மூதாதையர்", share: "🔗 பகிர்", import: "📂 இறக்குமதி", export_json: "💾 JSON",
-                export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ ஃபோகஸ் பயன்முறையிலிருந்து வெளியேறு",
+                theme_dark: "🌙 டார்க் மோட்", theme_light: "☀️ லைட்", rishta_calc: "🔗 உறவு", insights: "📊 புள்ளிவிவரங்கள்",
+                add_ancestor: "+ மூதாதையர்", share: "🔗 பகிர்", import: "📂 இறக்குமதி", export_json: "JSON பதிவிறக்கு",
+                export_csv: "CSV (Excel) பதிவிறக்கு", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ ஃபோகஸ் பயன்முறையிலிருந்து வெளியேறு",
+                export_menu: "⬇️ ஏற்றுமதி / காப்புப்பிரதி", safe_backups: "தரவு காப்புப்பிரதிகள்", visual_exports: "விளக்கப்படம் ஏற்றுமதி",
+                exp_screen: "திரை தரம் PNG (2x - WhatsApp க்கு)", exp_print: "அச்சு தரம் PNG (5x - A3 போஸ்டருக்கு)",
+                exp_banner: "பேனர் தரம் PNG (8x - பெரிய அச்சு) ⚠️ High RAM", exp_pdf: "A4 PDF (பல பக்க அச்சுப்பொறிக்கு)",
                 modal_identity: "⚙️ குடும்ப அடையாளம்", identity_sub: "இந்த விவரங்கள் உங்கள் அச்சிடப்பட்ட விளக்கப்படங்களில் தோன்றும்.",
                 family_title: "குடும்ப தலைப்பு", deity: "குலதெய்வம்", origin: "பூர்வீகம்",
                 save_identity: "அடையாளத்தை சேமி", modal_profile: "உறுப்பினர் சுயவிவரம்", focus_btn: "🎯 இந்த கிளையை மட்டும் காண்க",
                 primary_info: "முதன்மை தகவல்", name_en: "பெயர் (ஆங்கிலம்)", name_local: "பெயர் (தமிழ்)", trans_btn: "A→அ", gender: "பாலினம்",
-                status: "நிலை", dob: "பிறப்பு (தேதி/ஆண்டு)", dod: "இறப்பு (தேதி/ஆண்டு)", gotra: "கோத்திரம்", bio_mother: "உயிரியல் தாய்",
+                status: "நிலை", dob: "பிறப்பு (DD/MM/YYYY)", dod: "இறப்பு (DD/MM/YYYY)", gotra: "கோத்திரம்", bio_mother: "உயிரியல் தாய்",
                 spouse_details: "துணைவர் விவரங்கள்", add_spouse: "+ துணைவரை சேர்", hist_notes: "வரலாற்று குறிப்புகள்", save_profile: "சுயவிவரத்தை சேமி",
                 add_descendant: "சந்ததியை சேர்", child_name: "குழந்தையின் பெயர் (ஆங்கிலம்)", son_m: "மகன் (M)", daughter_f: "மகள் (F)",
                 add_btn: "+ சேர்", delete_branch: "⚠️ உறுப்பினரை நீக்கு", male: "ஆண்", female: "பெண்", living: "உயிருடன்", deceased: "காலமானவர்",
                 insights_title: "📊 குடும்ப புள்ளிவிவரங்கள்", total_mem: "மொத்த உறுப்பினர்கள்", gens: "தலைமுறைகள்", males: "ஆண்கள்", females: "பெண்கள்",
                 deceased_stat: "காலமானவர்", dates_rem: "🗓️ நினைவில் கொள்ள வேண்டிய தேதிகள்", rishta_title: "🔗 உறவு கால்குலேட்டர்",
                 rishta_sub: "இரண்டு குடும்ப உறுப்பினர்கள் எவ்வாறு தொடர்புடையவர்கள் என்பதைக் கண்டறியவும்.", person1: "நபர் 1", person2: "நபர் 2",
-                find_rel: "உறவைக் கண்டுபிடி", my_trees: "என் குடும்ப மரங்கள்:", relation: "உறவு", married: "திருமணமானவர்", divorced: "விவாகரத்து பெற்றவர்",
-                gen_all: "👁️ அனைத்து தலைமுறைகள்", gen_hl: "தலைமுறை ஹைலைட்", reset: "மீட்டமை",
-                confirm_reset: "இந்த மரத்தை முழுமையாக அழிக்க விரும்புகிறீர்களா? இது அனைத்தையும் அழித்துவிடும்.",
+                find_rel: "உறவைக் கண்டுபிடி", my_trees: "என் மரங்கள்:", relation: "உறவு", married: "திருமணமானவர்", divorced: "விவாகரத்து",
+                gen_all: "👁️ அனைத்து தலைமுறைகள்", gen_hl: "தலைமுறை ஹைலைட்", reset: "மீட்டமை", search_placeholder: "🔍 பெயரை தேடு...",
+                onboarding_tip: "👆 உங்கள் மரத்தை உருவாக்க மூதாதையரை கிளிக் செய்யவும்!",
+                confirm_reset: "இந்த மரத்தை அழிக்க விரும்புகிறீர்களா? நீங்கள் உடனடியாக Undo செய்யலாம்.",
                 tree_reset: "மரம் இயல்புநிலைக்கு மீட்டமைக்கப்பட்டது."
             },
             kn: {
                 about: "ಬಗ್ಗೆ", about_desc: "ಕುಟುಂಬಗಳು ತಮ್ಮ ಶ್ರೀಮಂತ ಪರಂಪರೆಯನ್ನು ದಾಖಲಿಸಲು ಮತ್ತು ಸಂರಕ್ಷಿಸಲು ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ.", about_contact: "ಸಲಹೆಗಳಿವೆಯೇ? ದಯವಿಟ್ಟು ಸಂಪರ್ಕಿಸಿ!",
-                theme_dark: "🌙 ಡಾರ್ಕ್ ಮೋಡ್", theme_light: "☀️ ಲೈಟ್", rishta_calc: "🔗 ಸಂಬಂಧ ಕ್ಯಾಲ್ಕುಲೇಟರ್", insights: "📊 ಅಂಕಿಅಂಶಗಳು",
-                add_ancestor: "+ ಪೂರ್ವಜ", share: "🔗 ಹಂಚಿಕೊಳ್ಳಿ", import: "📂 ಆಮದು", export_json: "💾 JSON",
-                export_csv: "📄 CSV", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ ಫೋಕಸ್ ಮೋಡ್‌ನಿಂದ ನಿರ್ಗಮಿಸಿ",
+                theme_dark: "🌙 ಡಾರ್ಕ್ ಮೋಡ್", theme_light: "☀️ ಲೈಟ್", rishta_calc: "🔗 ಸಂಬಂಧ", insights: "📊 ಅಂಕಿಅಂಶಗಳು",
+                add_ancestor: "+ ಪೂರ್ವಜ", share: "🔗 ಹಂಚಿಕೊಳ್ಳಿ", import: "📂 ಆಮದು", export_json: "JSON ಡೌನ್‌ಲೋಡ್",
+                export_csv: "CSV (Excel) ಡೌನ್‌ಲೋಡ್", export_jpg: "🖼️ JPG", export_pdf: "📄 PDF", exit_focus: "❌ ಫೋಕಸ್ ಮೋಡ್‌ನಿಂದ ನಿರ್ಗಮಿಸಿ",
+                export_menu: "⬇️ ರಫ್ತು / ಬ್ಯಾಕಪ್", safe_backups: "ಸುರಕ್ಷಿತ ಬ್ಯಾಕಪ್", visual_exports: "ಚಾರ್ಟ್ ರಫ್ತು",
+                exp_screen: "ಸ್ಕ್ರೀನ್ ಗುಣಮಟ್ಟ PNG (2x - WhatsApp ಗೆ)", exp_print: "ಪ್ರಿಂಟ್ ಗುಣಮಟ್ಟ PNG (5x - A3 ಪೋಸ್ಟರ್‌ಗೆ)",
+                exp_banner: "ಬ್ಯಾನರ್ ಗುಣಮಟ್ಟ PNG (8x - ದೊಡ್ಡ ಪ್ರಿಂಟ್) ⚠️ High RAM", exp_pdf: "A4 PDF (ಮಲ್ಟಿ-ಪೇಜ್ ಪ್ರಿಂಟರ್‌ಗೆ)",
                 modal_identity: "⚙️ ಕುಟುಂಬದ ಗುರುತು", identity_sub: "ಈ ವಿವರಗಳು ನಿಮ್ಮ ಮುದ್ರಿತ ಚಾರ್ಟ್‌ಗಳಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತವೆ.",
                 family_title: "ಕುಟುಂಬದ ಶೀರ್ಷಿಕೆ", deity: "ಕುಲದೇವತೆ", origin: "ಮೂಲ ನಿವಾಸ",
                 save_identity: "ಗುರುತನ್ನು ಉಳಿಸಿ", modal_profile: "ಸದಸ್ಯರ ಪ್ರೊಫೈಲ್", focus_btn: "🎯 ಈ ಶಾಖೆಯನ್ನು ಮಾತ್ರ ವೀಕ್ಷಿಸಿ",
                 primary_info: "ಪ್ರಾಥಮಿಕ ಮಾಹಿತಿ", name_en: "ಹೆಸರು (ಇಂಗ್ಲಿಷ್)", name_local: "ಹೆಸರು (ಕನ್ನಡ)", trans_btn: "A→ಅ", gender: "ಲಿಂಗ",
-                status: "ಸ್ಥಿತಿ", dob: "ಜನನ (ದಿನಾಂಕ/ವರ್ಷ)", dod: "ಮರಣ (ದಿನಾಂಕ/ವರ್ಷ)", gotra: "ಗೋತ್ರ", bio_mother: "ಜೈವಿಕ ತಾಯಿ",
+                status: "ಸ್ಥಿತಿ", dob: "ಜನನ (DD/MM/YYYY)", dod: "ಮರಣ (DD/MM/YYYY)", gotra: "ಗೋತ್ರ", bio_mother: "ಜೈವಿಕ ತಾಯಿ",
                 spouse_details: "ಸಂಗಾತಿಯ ವಿವರಗಳು", add_spouse: "+ ಸಂಗಾತಿಯನ್ನು ಸೇರಿಸಿ", hist_notes: "ಐತಿಹಾಸಿಕ ಟಿಪ್ಪಣಿಗಳು", save_profile: "ಪ್ರೊಫೈಲ್ ಉಳಿಸಿ",
                 add_descendant: "ಸಂತತಿಯನ್ನು ಸೇರಿಸಿ", child_name: "ಮಗುವಿನ ಹೆಸರು (ಇಂಗ್ಲಿಷ್)", son_m: "ಮಗ (M)", daughter_f: "ಮಗಳು (F)",
                 add_btn: "+ ಸೇರಿಸಿ", delete_branch: "⚠️ ಸದಸ್ಯರನ್ನು ಅಳಿಸಿ", male: "ಪುರುಷ", female: "ಮಹಿಳೆ", living: "ಜೀವಂತ", deceased: "ಮೃತಪಟ್ಟಿದ್ದಾರೆ",
@@ -479,8 +557,9 @@
                 deceased_stat: "ಮೃತಪಟ್ಟಿದ್ದಾರೆ", dates_rem: "🗓️ ನೆನಪಿಡಬೇಕಾದ ದಿನಾಂಕಗಳು", rishta_title: "🔗 ಸಂಬಂಧ ಕ್ಯಾಲ್ಕುಲೇಟರ್",
                 rishta_sub: "ಇಬ್ಬರು ಕುಟುಂಬ ಸದಸ್ಯರು ಹೇಗೆ ಸಂಬಂಧ ಹೊಂದಿದ್ದಾರೆ ಎಂಬುದನ್ನು ಕಂಡುಕೊಳ್ಳಿ.", person1: "ವ್ಯಕ್ತಿ 1", person2: "ವ್ಯಕ್ತಿ 2",
                 find_rel: "ಸಂಬಂಧವನ್ನು ಹುಡುಕಿ", my_trees: "ನನ್ನ ಮರಗಳು:", relation: "ಸಂಬಂಧ", married: "ವಿವಾಹಿತ", divorced: "ವಿಚ್ಛೇದಿತ",
-                gen_all: "👁️ ಎಲ್ಲಾ ತಲೆಮಾರುಗಳು", gen_hl: "ತಲೆಮಾರು ಹೈಲೈಟ್", reset: "ಮರುಹೊಂದಿಸಿ",
-                confirm_reset: "ನೀವು ಖಂಡಿತವಾಗಿಯೂ ಈ ಮರವನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ಅಳಿಸಲು ಬಯಸುತ್ತೀರಾ? ಇದು ಎಲ್ಲವನ್ನೂ ಅಳಿಸುತ್ತದೆ.",
+                gen_all: "👁️ ಎಲ್ಲಾ ತಲೆಮಾರುಗಳು", gen_hl: "ತಲೆಮಾರು ಹೈಲೈಟ್", reset: "ಮರುಹೊಂದಿಸಿ", search_placeholder: "🔍 ಹೆಸರು ಹುಡುಕಿ...",
+                onboarding_tip: "👆 ನಿಮ್ಮ ಮರವನ್ನು ನಿರ್ಮಿಸಲು ಮೂಲ ಪೂರ್ವಜರ ಮೇಲೆ ಕ್ಲಿಕ್ ಮಾಡಿ!",
+                confirm_reset: "ಈ ಮರವನ್ನು ಅಳಿಸಲು ನೀವು ಬಯಸುವಿರಾ? ಅಗತ್ಯವಿದ್ದರೆ ನೀವು ತಕ್ಷಣ Undo ಮಾಡಬಹುದು.",
                 tree_reset: "ಮರವನ್ನು ಡೀಫಾಲ್ಟ್‌ಗೆ ಮರುಹೊಂದಿಸಲಾಗಿದೆ."
             }
         };
@@ -506,8 +585,7 @@
         function changeLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('bansawali_lang', currentLang);
-            applyLanguage();
-            renderTree(); 
+            applyLanguage(); renderTree(); 
         }
 
         let isDarkMode = false;
@@ -518,12 +596,11 @@
             if(!skipSave) localStorage.setItem('bansawali_theme', isDarkMode ? 'dark' : 'light');
         }
         
-        function openAboutModal() {
-            document.getElementById('aboutModal').style.display = 'flex';
-        }
+        function openAboutModal() { document.getElementById('aboutModal').style.display = 'flex'; }
+        function openExportModal() { document.getElementById('exportModal').style.display = 'flex'; }
 
         // --- 2. MULTI-TREE REGISTRY & STORAGE ---
-        let treeRegistry = JSON.parse(localStorage.getItem('bansawali_registry')) || [];
+        let treeRegistry = safeParseJSON('bansawali_registry', []);
         let activeTreeId = localStorage.getItem('bansawali_active_tree') || 'default';
         let appConfig = { title: "Shri Parivar Bansawali", deity: "", origin: "" };
         let familyData = null;
@@ -533,17 +610,16 @@
                 const oldData = localStorage.getItem('bansawali_data');
                 const oldConfig = localStorage.getItem('bansawali_config');
                 if(oldData) {
-                    localStorage.setItem('bansawali_data_default', oldData);
-                    localStorage.setItem('bansawali_config_default', oldConfig || '{}');
-                    localStorage.removeItem('bansawali_data'); 
-                    localStorage.removeItem('bansawali_config');
+                    safeSetItem('bansawali_data_default', oldData);
+                    safeSetItem('bansawali_config_default', oldConfig || '{}');
+                    localStorage.removeItem('bansawali_data'); localStorage.removeItem('bansawali_config');
                     let conf = JSON.parse(oldConfig || '{}');
                     treeRegistry = [{id: 'default', name: conf.title || 'Shri Parivar Bansawali'}];
                 } else {
                     treeRegistry = [{id: 'default', name: 'My First Tree'}];
                 }
-                localStorage.setItem('bansawali_registry', JSON.stringify(treeRegistry));
-                localStorage.setItem('bansawali_active_tree', 'default');
+                safeSetItem('bansawali_registry', JSON.stringify(treeRegistry));
+                safeSetItem('bansawali_active_tree', 'default');
             }
         }
 
@@ -555,9 +631,7 @@
         function switchTree(id) {
             activeTreeId = id;
             localStorage.setItem('bansawali_active_tree', activeTreeId);
-            loadTreeData();
-            updateTreeDropdown();
-            showToast("Switched Tree");
+            loadTreeData(); updateTreeDropdown(); showToast("Switched Tree");
         }
 
         function createNewTree() {
@@ -565,16 +639,14 @@
             const newName = prompt("Enter a name for the new family tree:", "New Family Tree");
             if(newName) {
                 treeRegistry.push({id: newId, name: newName});
-                localStorage.setItem('bansawali_registry', JSON.stringify(treeRegistry));
-                
+                safeSetItem('bansawali_registry', JSON.stringify(treeRegistry));
                 appConfig = { title: newName, deity: "", origin: "" };
                 familyData = generateDefaultTree();
                 activeTreeId = newId;
                 localStorage.setItem('bansawali_active_tree', activeTreeId);
                 
-                saveSettings(); saveData();
-                loadTreeData(); updateTreeDropdown();
-                showToast("New tree created!");
+                safeSetItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig)); 
+                saveData(); loadTreeData(); updateTreeDropdown(); showToast("New tree created!");
             }
         }
 
@@ -583,13 +655,12 @@
             if(confirm(`Are you sure you want to permanently delete the tree: ${appConfig.title}?`)) {
                 localStorage.removeItem('bansawali_data_' + activeTreeId);
                 localStorage.removeItem('bansawali_config_' + activeTreeId);
-                treeRegistry = treeRegistry.filter(t => t.id !== activeTreeId);
-                localStorage.setItem('bansawali_registry', JSON.stringify(treeRegistry));
+                treeRegistry = treeRegistry.filter(tree => tree.id !== activeTreeId);
+                safeSetItem('bansawali_registry', JSON.stringify(treeRegistry));
                 
                 activeTreeId = treeRegistry[0].id;
                 localStorage.setItem('bansawali_active_tree', activeTreeId);
-                loadTreeData(); updateTreeDropdown();
-                showToast("Tree deleted.");
+                loadTreeData(); updateTreeDropdown(); showToast("Tree deleted.");
             }
         }
 
@@ -612,11 +683,14 @@
             appConfig.title = document.getElementById('configTitle').value || 'Shri Parivar Bansawali';
             appConfig.deity = document.getElementById('configDeity').value;
             appConfig.origin = document.getElementById('configOrigin').value;
-            localStorage.setItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
+            safeSetItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
             
             let tIndex = treeRegistry.findIndex(t => t.id === activeTreeId);
-            if(tIndex > -1) { treeRegistry[tIndex].name = appConfig.title; localStorage.setItem('bansawali_registry', JSON.stringify(treeRegistry)); updateTreeDropdown(); }
-            
+            if(tIndex > -1) { 
+                treeRegistry[tIndex].name = appConfig.title; 
+                safeSetItem('bansawali_registry', JSON.stringify(treeRegistry)); 
+                updateTreeDropdown(); 
+            }
             updateHeaderDisplay(); closeModal('settingsModal'); showToast("Identity Saved!");
         }
 
@@ -629,9 +703,7 @@
                 familyData = rawData ? migrateData(JSON.parse(rawData)) : generateDefaultTree();
             } catch (e) { showToast("Data corrupted. Starting fresh."); familyData = generateDefaultTree(); }
             
-            updateHeaderDisplay(); 
-            historyStack = []; historyIndex = -1; 
-            pushHistory(true); renderTree(); resetZoom();
+            updateHeaderDisplay(); historyStack = []; historyIndex = -1; pushHistory(true); renderTree(); resetZoom();
         }
 
         function migrateData(node) {
@@ -648,23 +720,13 @@
             
             if (!Array.isArray(node.spouses)) node.spouses = [];
             node.spouses = node.spouses.filter(sp => sp && typeof sp === 'object');
-            node.spouses.forEach(sp => { 
-                if (sp.dob === undefined) sp.dob = ''; 
-                if (sp.dod === undefined) sp.dod = ''; 
-                if (!sp.id) sp.id = generateUUID(); 
-            });
+            node.spouses.forEach(sp => { if (sp.dob === undefined) sp.dob = ''; if (sp.dod === undefined) sp.dod = ''; if (!sp.id) sp.id = generateUUID(); });
             
-            if(node.motherId === undefined) node.motherId = ''; 
-            if(!node.notes) node.notes = ''; 
-            if(!node.gotra) node.gotra = ''; 
-            if(!node.dod) node.dod = ''; 
-            if(!node.dob) node.dob = '';
-            if(!node.gender) node.gender = 'M';
-            if(!node.status) node.status = 'Living';
+            if(node.motherId === undefined) node.motherId = ''; if(!node.notes) node.notes = ''; if(!node.gotra) node.gotra = ''; if(!node.dod) node.dod = ''; if(!node.dob) node.dob = '';
+            if(!node.gender) node.gender = 'M'; if(!node.status) node.status = 'Living';
             
             if (!Array.isArray(node.children)) node.children = [];
             node.children = node.children.map(migrateData).filter(c => c !== null); 
-            
             return node;
         }
 
@@ -675,19 +737,20 @@
             };
         }
 
-        // V11.3: Restored and enhanced Reset Function
+        // V12 CRITICAL FIX: Safe Reset Tree avoids DOM reading
         function resetTree() {
             if (confirm(t('confirm_reset'))) {
                 familyData = generateDefaultTree();
-                
-                // Also wipe the family identity
                 appConfig = { title: "Shri Parivar Bansawali", deity: "", origin: "" };
-                saveSettings(); // Saves identity to local storage and updates header
+                safeSetItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
                 
-                pushHistory(); 
-                renderTree(); 
-                resetZoom(); 
-                showToast(t('tree_reset'));
+                let tIndex = treeRegistry.findIndex(t => t.id === activeTreeId);
+                if(tIndex > -1) { 
+                    treeRegistry[tIndex].name = appConfig.title; 
+                    safeSetItem('bansawali_registry', JSON.stringify(treeRegistry)); 
+                    updateTreeDropdown(); 
+                }
+                updateHeaderDisplay(); pushHistory(); renderTree(); resetZoom(); showToast(t('tree_reset'));
             }
         }
 
@@ -703,21 +766,26 @@
                 try {
                     const decompressed = LZString.decompressFromEncodedURIComponent(hash);
                     const sharedData = JSON.parse(decompressed);
-                    if (sharedData.tree) { familyData = migrateData(sharedData.tree); if(sharedData.config) appConfig = Object.assign(appConfig, sharedData.config); } 
-                    else { familyData = migrateData(sharedData); }
+                    
+                    // V12 HIGH FIX: Safe Share Link Load (Never overwrite active tree)
+                    const newId = generateUUID();
+                    const sharedTitle = (sharedData.config && sharedData.config.title) ? `Shared: ${sharedData.config.title}` : 'Shared Tree';
+                    
+                    treeRegistry.push({id: newId, name: sharedTitle});
+                    safeSetItem('bansawali_registry', JSON.stringify(treeRegistry));
+                    
+                    activeTreeId = newId;
+                    localStorage.setItem('bansawali_active_tree', activeTreeId);
+                    
+                    familyData = migrateData(sharedData.tree || sharedData); 
+                    appConfig = Object.assign({title: sharedTitle, deity: "", origin: ""}, sharedData.config || {});
                     
                     history.replaceState(null, '', window.location.pathname + window.location.search);
-                    showToast("Shared tree loaded! Edits will save locally.");
+                    showToast("Loaded as new tree: " + sharedTitle);
                     
-                    localStorage.setItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
-                    let tIndex = treeRegistry.findIndex(t => t.id === activeTreeId);
-                    if(tIndex > -1) { 
-                        treeRegistry[tIndex].name = appConfig.title; 
-                        localStorage.setItem('bansawali_registry', JSON.stringify(treeRegistry)); 
-                        updateTreeDropdown(); 
-                    }
-                    saveData(); 
-                } catch (e) { showToast("Invalid share link. Loading local data."); }
+                    safeSetItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
+                    saveData(); updateTreeDropdown(); updateHeaderDisplay(); pushHistory(true); renderTree(); resetZoom();
+                } catch (e) { showToast("Invalid share link. Loading local data."); loadTreeData(); }
             } else {
                 loadTreeData();
             }
@@ -732,7 +800,30 @@
         function updateHistoryUI() { document.getElementById('btnUndo').disabled = historyIndex <= 0; document.getElementById('btnRedo').disabled = historyIndex >= historyStack.length - 1; }
         function undo() { if (historyIndex > 0) { historyIndex--; familyData = JSON.parse(historyStack[historyIndex]); renderTree(); saveData(); updateHistoryUI(); } }
         function redo() { if (historyIndex < historyStack.length - 1) { historyIndex++; familyData = JSON.parse(historyStack[historyIndex]); renderTree(); saveData(); updateHistoryUI(); } }
-        function saveData() { localStorage.setItem('bansawali_data_' + activeTreeId, JSON.stringify(familyData)); }
+        function saveData() { safeSetItem('bansawali_data_' + activeTreeId, JSON.stringify(familyData)); }
+
+        // V12: Search Tree Feature
+        function searchTree(query) {
+            document.querySelectorAll('.node-box').forEach(box => box.classList.remove('highlighted-search'));
+            if (!query.trim()) return;
+            const lowerQ = query.toLowerCase();
+            const nodes = document.querySelectorAll('.node-box');
+            let found = false;
+            nodes.forEach(box => {
+                const nameEn = box.querySelector('.node-name')?.innerText.toLowerCase() || '';
+                const nameHi = box.querySelector('.node-hindi')?.innerText.toLowerCase() || '';
+                const spouseNames = Array.from(box.querySelectorAll('.spouse')).map(s => s.innerText.toLowerCase()).join(' ');
+                
+                if (nameEn.includes(lowerQ) || nameHi.includes(lowerQ) || spouseNames.includes(lowerQ)) {
+                    box.classList.add('highlighted-search');
+                    if (!found) {
+                        const rect = box.getBoundingClientRect(); const wrapperRect = wrapper.getBoundingClientRect();
+                        panX -= (rect.left - wrapperRect.left - wrapperRect.width/2); panY -= (rect.top - wrapperRect.top - wrapperRect.height/2);
+                        updateTransform(); found = true;
+                    }
+                }
+            });
+        }
 
         // --- 3. DYNAMIC TRANSLATION API ---
         async function translateName(sourceId, targetId, btnId) {
@@ -763,16 +854,15 @@
         window.addEventListener('mouseup', () => isDragging = false);
         window.addEventListener('mousemove', (e) => { if (!isDragging) return; panX = e.clientX - startX; panY = e.clientY - startY; updateTransform(); });
         
+        // V12: Zoom toward cursor
         wrapper.addEventListener('wheel', (e) => { 
             e.preventDefault(); 
             const zoomFactor = e.deltaY < 0 ? 0.1 : -0.1;
             const newScale = scale + zoomFactor;
             if (newScale >= 0.2 && newScale <= 3) {
                 const rect = wrapper.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const mouseY = e.clientY - rect.top;
-                panX = mouseX - (mouseX - panX) * (newScale / scale);
-                panY = mouseY - (mouseY - panY) * (newScale / scale);
+                const mouseX = e.clientX - rect.left; const mouseY = e.clientY - rect.top;
+                panX = mouseX - (mouseX - panX) * (newScale / scale); panY = mouseY - (mouseY - panY) * (newScale / scale);
                 scale = newScale; updateTransform();
             }
         }, {passive:false});
@@ -792,6 +882,7 @@
             }
         }, {passive: false});
 
+        // V12 HIGH FIX: toggleBranch uses saveData directly, stops Undo stack pollution
         function toggleAllBranches(collapse) { function recursiveToggle(node) { if (node.children && node.children.length > 0) { node.collapsed = collapse; node.children.forEach(recursiveToggle); } } recursiveToggle(familyData); renderTree(); saveData(); }
         function toggleBranch(id) { const res = findNode(familyData, id); if (res) { res.node.collapsed = !res.node.collapsed; renderTree(); saveData(); } }
 
@@ -854,6 +945,7 @@
             }
         }
         
+        // V12: Safe CSS Keyframes Marquee for Upcoming Dates
         function updateUpcomingDates() {
             const today = new Date(); const currentMonth = today.getMonth() + 1; const currentDay = today.getDate();
             let upcoming = []; const dateRegex = /\b(0[1-9]|[12][0-9]|3[01])[\/\-](0[1-9]|1[012])\b/;
@@ -884,7 +976,7 @@
             const banner = document.getElementById('upcoming-banner');
             if (upcoming.length > 0) {
                 let html = upcoming.map(u => `<b>${u.type}:</b> ${sanitize(u.name)} (${u.days === 0 ? 'Today!' : 'in ' + u.days + ' days'})`).join(' &nbsp;&nbsp;|&nbsp;&nbsp; ');
-                banner.innerHTML = `<marquee scrollamount="5">${html}</marquee>`; banner.style.display = 'block';
+                banner.innerHTML = `<div class="marquee-content">${html}</div>`; banner.style.display = 'block';
             } else { banner.style.display = 'none'; }
         }
 
@@ -896,6 +988,19 @@
             updateGenDropdown(); 
             document.getElementById('tree-root').innerHTML = `<ul>${generateNodeHTML(familyData, null, 1)}</ul>`; 
             updateUpcomingDates(); setTimeout(drawGenerationGridlines, 10); 
+            
+            // V12 P1 Onboarding Tooltip
+            const tooltip = document.getElementById('onboarding-tooltip');
+            if (familyData && familyData.children.length === 0 && activeTreeId === 'default' && familyData.name === 'Mool Purush') {
+                const rootBox = document.querySelector('.node-box');
+                if (rootBox) {
+                    const rect = rootBox.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left + (rect.width/2)}px`;
+                    tooltip.style.top = `${rect.bottom + 15}px`;
+                    tooltip.style.transform = 'translateX(-50%)';
+                    tooltip.style.display = 'block';
+                }
+            } else { tooltip.style.display = 'none'; }
         }
 
         function generateNodeHTML(node, parentNode, currentGen) {
@@ -1061,7 +1166,7 @@
 
         function deleteNode() {
             const id = document.getElementById('editNodeId').value;
-            if (confirm("WARNING: Deletes member and ALL descendants! Cannot be easily undone.")) {
+            if (confirm("Delete member and ALL descendants? You can Undo (↩) immediately after if needed.")) {
                 const result = findNode(familyData, id);
                 if (result && result.parent) { result.parent.children = result.parent.children.filter(child => child.id !== id); pushHistory(); renderTree(); closeModal('editorModal'); }
             }
@@ -1180,9 +1285,9 @@
 
             let graph = {};
             function buildGraph(node, parent) {
-                if(!graph[node.id]) graph[node.id] = { name: node.name, gender: node.gender, links: [] };
+                if(!graph[node.id]) graph[node.id] = { name: node.name, gender: node.gender, gotra: node.gotra, links: [] };
                 node.spouses.forEach(sp => {
-                    if(!graph[sp.id]) graph[sp.id] = { name: sp.name, gender: node.gender==='M'?'F':'M', links: [] };
+                    if(!graph[sp.id]) graph[sp.id] = { name: sp.name, gender: node.gender==='M'?'F':'M', gotra: node.gotra, links: [] }; // Spouses often take Gotra
                     graph[node.id].links.push({ id: sp.id, rel: 'Spouse' }); graph[sp.id].links.push({ id: node.id, rel: 'Spouse' });
                 });
                 if(parent) {
@@ -1303,27 +1408,27 @@
                 else relationText = `Distant Relative (${pathArr.join(' -> ')})`;
             }
 
-            let startName = graph[startId].name;
-            let endName = graph[endId].name;
-            let text = "";
+            let startName = graph[startId].name; let endName = graph[endId].name; let text = "";
             if (currentLang === 'hi') { text = `${endName}, ${startName} का/की ${relationText} है।`; } 
             else if (currentLang === 'ta') { text = `${endName}, ${startName} இன் ${relationText} ஆவார்.`; } 
             else if (currentLang === 'kn') { text = `${endName}, ${startName} ಅವರ ${relationText} ಆಗಿದ್ದಾರೆ.`; } 
             else { text = `${endName} is ${startName}'s ${relationText}.`; }
             
-            resDiv.textContent = text;
+            // V12 P3: Sagotra Warning Check
+            const startGotra = graph[startId].gotra; const endGotra = graph[endId].gotra;
+            let gotraWarning = (startGotra && endGotra && startGotra.toLowerCase() === endGotra.toLowerCase() && startGotra !== '') 
+                ? `<br><span style="color:#d32f2f; font-size:12px;">⚠️ Sagotra Detected (${sanitize(startGotra)})</span>` : '';
+            
+            resDiv.innerHTML = text + gotraWarning;
             resDiv.style.display = 'block';
         }
 
-        // --- 7. EXPORTS ---
+        // --- 7. TIERED EXPORTS ---
         function generateShareLink() {
             try {
                 const payload = JSON.stringify({ config: appConfig, tree: familyData });
                 const compressed = LZString.compressToEncodedURIComponent(payload);
-                if (compressed.length > 6000) {
-                    showToast(`URL too long (${Math.round(compressed.length/1024)}KB). Please use JSON Export instead.`);
-                    return;
-                }
+                if (compressed.length > 6000) { showToast(`URL too long (${Math.round(compressed.length/1024)}KB). Please use JSON Export instead.`); return; }
                 const url = window.location.href.split('#')[0] + "#" + compressed;
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(url).then(() => { showToast("Link copied to clipboard!"); }).catch(err => { prompt("Copy this link:", url); });
@@ -1341,30 +1446,20 @@
             reader.onload = function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
-                    if(imported.tree && imported.config) { 
-                        familyData = migrateData(imported.tree); 
-                        appConfig = Object.assign({title: "Shri Parivar Bansawali", deity:"", origin:""}, imported.config); 
-                    } else if(imported.id) { 
-                        familyData = migrateData(imported); 
-                    }
+                    if(imported.tree && imported.config) { familyData = migrateData(imported.tree); appConfig = Object.assign({title: "Shri Parivar Bansawali", deity:"", origin:""}, imported.config); } 
+                    else if(imported.id) { familyData = migrateData(imported); }
                     
                     document.getElementById('configTitle').value = appConfig.title || '';
                     document.getElementById('configDeity').value = appConfig.deity || '';
                     document.getElementById('configOrigin').value = appConfig.origin || '';
                     
-                    localStorage.setItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
+                    safeSetItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
                     let tIndex = treeRegistry.findIndex(t => t.id === activeTreeId);
-                    if(tIndex > -1) { 
-                        treeRegistry[tIndex].name = appConfig.title; 
-                        localStorage.setItem('bansawali_registry', JSON.stringify(treeRegistry)); 
-                        updateTreeDropdown(); 
-                    }
+                    if(tIndex > -1) { treeRegistry[tIndex].name = appConfig.title; safeSetItem('bansawali_registry', JSON.stringify(treeRegistry)); updateTreeDropdown(); }
                     
                     updateHeaderDisplay(); pushHistory(); renderTree(); resetZoom(); showToast("Data imported successfully!");
-                } catch(err) { 
-                    console.error("JSON Parse Error:", err);
-                    alert("Import failed. Error: " + err.message + "\nEnsure the file is a valid JSON."); 
-                }
+                } catch(err) { console.error("JSON Parse Error:", err); alert("Import failed. Error: " + err.message + "\nEnsure the file is a valid JSON."); }
+                finally { closeModal('exportModal'); }
             }; reader.readAsText(file); event.target.value = ''; 
         }
 
@@ -1402,45 +1497,34 @@
             states.expHeader.style.display = 'none'; if(states.wasDark) toggleTheme(true);
         }
 
-        async function exportJPG(event) {
-            const btn = event.target; const oldText = btn.innerText; btn.innerText = "⏳ Capturing...";
+        // V12 TIERED EXPORT LOGIC
+        async function executeExport(type, scaleMultiplier) {
+            const btn = event.target; const oldText = btn.innerText; 
+            btn.innerText = "⏳ Capturing (Do not close tab)..."; btn.disabled = true;
+
             const oldDataStr = JSON.stringify(familyData); const states = prepareForExport();
 
-            setTimeout(async () => {
-                try {
-                    const element = document.getElementById('tree-container');
-                    const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#FFF8E7', windowWidth: element.scrollWidth, windowHeight: element.scrollHeight });
-                    const link = document.createElement('a'); link.download = `${appConfig.title.replace(/\s+/g, '_')}_Chart.jpg`; link.href = canvas.toDataURL('image/jpeg', 0.95); link.click();
-                } catch(e) {
-                    console.error(e); showToast("Export failed. Tree might be too large.");
-                } finally {
-                    restoreAfterExport(states, oldDataStr); btn.innerText = oldText;
-                }
-            }, 500);
-        }
-
-        async function exportHorizontalPDF(event) {
-            const btn = event.target; const oldText = btn.innerText; btn.innerText = "⏳ Slicing...";
-            const oldDataStr = JSON.stringify(familyData); const states = prepareForExport();
-
-            setTimeout(async () => {
-                try {
-                    const element = document.getElementById('tree-container');
-                    const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#FFF8E7', windowWidth: element.scrollWidth, windowHeight: element.scrollHeight });
+            try {
+                await new Promise(r => setTimeout(r, 100)); // Allow UI paint before heavy freeze
+                const element = document.getElementById('tree-container');
+                const canvas = await html2canvas(element, { scale: scaleMultiplier, backgroundColor: '#FFF8E7', windowWidth: element.scrollWidth, windowHeight: element.scrollHeight, logging: false });
+                
+                if(type === 'png') {
+                    const link = document.createElement('a'); link.download = `${appConfig.title.replace(/\s+/g, '_')}_Chart.png`; link.href = canvas.toDataURL('image/png'); link.click();
+                } else if(type === 'pdf') {
                     const { jsPDF } = window.jspdf; const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
                     const pdfWidth = pdf.internal.pageSize.getWidth(); const pdfHeight = pdf.internal.pageSize.getHeight();
                     const ratio = pdfHeight / canvas.height; const scaledWidth = canvas.width * ratio; const imgData = canvas.toDataURL('image/png');
-
                     let widthLeft = scaledWidth; let positionX = 0;
                     pdf.addImage(imgData, 'PNG', positionX, 0, scaledWidth, pdfHeight); widthLeft -= pdfWidth;
                     while (widthLeft > 0) { positionX -= pdfWidth; pdf.addPage(); pdf.addImage(imgData, 'PNG', positionX, 0, scaledWidth, pdfHeight); widthLeft -= pdfWidth; }
                     pdf.save(`${appConfig.title.replace(/\s+/g, '_')}_Chart.pdf`);
-                } catch(e) {
-                    console.error(e); showToast("Export failed. Tree might be too large.");
-                } finally {
-                    restoreAfterExport(states, oldDataStr); btn.innerText = oldText;
                 }
-            }, 500);
+            } catch(e) {
+                console.error(e); alert("Export failed! Your tree might be too large for this quality setting. Try a lower tier (e.g., Screen Quality).");
+            } finally {
+                restoreAfterExport(states, oldDataStr); btn.innerText = oldText; btn.disabled = false; closeModal('exportModal');
+            }
         }
 
         // START APP
