@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Hindu Bansawali Builder V12.0</title>
+    <title>Enterprise Hindu Bansawali Builder V12.1</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -45,13 +45,13 @@
 
         .tree-selector-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 6px;}
         
-        /* V12: ACCESSIBLE CSS MARQUEE */
+        /* ACCESSIBLE CSS MARQUEE */
         #upcoming-banner { display:none; background: var(--gold); color: #000; font-size: 13px; border-bottom: 1px solid var(--maroon); z-index: 99; position: relative; font-weight: 500; overflow: hidden; white-space: nowrap; padding: 5px 0;}
         body.dark-mode #upcoming-banner { background: #5C3A21; color: #FADBB8; border-color: #222; }
         .marquee-content { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
-        /* V12: MOBILE RESPONSIVE SCROLLABLE TOOLBAR */
+        /* MOBILE RESPONSIVE SCROLLABLE TOOLBAR */
         .toolbar-controls { display: flex; gap: 8px; align-items: center; flex-grow: 1; justify-content: flex-end; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 5px; scrollbar-width: none; }
         .toolbar-controls::-webkit-scrollbar { display: none; }
         
@@ -118,7 +118,6 @@
         .node-box.dimmed-node { opacity: 0.25; filter: grayscale(80%); box-shadow: none; border-color: #555; }
         .node-box.dimmed-node:hover { opacity: 1; filter: grayscale(0%); border-color: var(--saffron); }
         
-        /* V12: Search Highlight */
         .node-box.highlighted-search { box-shadow: 0 0 0 4px var(--saffron), 0 0 20px var(--saffron) !important; transform: scale(1.05); z-index: 10; }
 
         .node-name { font-weight: bold; font-size: 15px; margin-bottom: 2px; }
@@ -196,9 +195,9 @@
         .export-btn { width: 100%; text-align: left; margin-bottom: 8px; padding: 15px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-main); border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s;}
         .export-btn:hover { background: var(--bg-warm); border-color: var(--saffron); }
 
-        /* V12: Safe Print Mode */
+        /* Safe Print Mode */
         @media print { 
-            .toolbar, .zoom-controls, #clear-focus-btn, .modal, #toast, #upcoming-banner { display: none !important; } 
+            .toolbar, .zoom-controls, #clear-focus-btn, .modal, #toast, #upcoming-banner, .search-input { display: none !important; } 
             #canvas-wrapper { overflow: visible !important; height: auto !important; } 
             #tree-container { position: static !important; transform: none !important; padding: 0 !important;} 
             .bg-pattern { display: none !important; }
@@ -302,10 +301,10 @@
             <button class="export-btn" onclick="document.getElementById('importFile').click()" style="background:var(--bg-warm);">📂 <span data-i18n="import">Import / Restore JSON</span></button>
             
             <div class="section-title" style="margin-top: 20px;" data-i18n="visual_exports">Visual Chart Exports</div>
-            <button class="export-btn" id="btnExport2x" onclick="executeExport('png', 2)">🖼️ <span data-i18n="exp_screen">Screen Quality PNG (2x - Best for WhatsApp)</span></button>
-            <button class="export-btn" id="btnExport5x" onclick="executeExport('png', 5)">🖼️ <span data-i18n="exp_print">Print Quality PNG (5x - Best for A3 Posters)</span></button>
-            <button class="export-btn" id="btnExport8x" onclick="executeExport('png', 8)" style="border-color: #d32f2f;">🌟 <span data-i18n="exp_banner">Banner Quality PNG (8x - Massive Flex Print) ⚠️ High RAM</span></button>
-            <button class="export-btn" id="btnExportPDF" onclick="executeExport('pdf', 3)">📄 <span data-i18n="exp_pdf">A4 PDF (Multi-page grid for desk printers)</span></button>
+            <button class="export-btn" id="btnExport2x" onclick="executeExport(event, 'png', 2)">🖼️ <span data-i18n="exp_screen">Screen Quality PNG (2x - Best for WhatsApp)</span></button>
+            <button class="export-btn" id="btnExport5x" onclick="executeExport(event, 'png', 5)">🖼️ <span data-i18n="exp_print">Print Quality PNG (5x - Best for A3 Posters)</span></button>
+            <button class="export-btn" id="btnExport8x" onclick="executeExport(event, 'png', 8)" style="border-color: #d32f2f;">🌟 <span data-i18n="exp_banner">Banner Quality PNG (8x - Massive Flex Print) ⚠️ High RAM</span></button>
+            <button class="export-btn" id="btnExportPDF" onclick="executeExport(event, 'pdf', 3)">📄 <span data-i18n="exp_pdf">A4 PDF (Multi-page grid for desk printers)</span></button>
         </div>
     </div>
 
@@ -416,9 +415,9 @@
             <span class="close" onclick="closeModal('rishtaModal')">&times;</span>
             <h3 style="margin-top:0; color:var(--maroon)" data-i18n="rishta_title">🔗 Rishta (Kinship) Calculator</h3>
             <p style="font-size: 13px; opacity:0.8;" data-i18n="rishta_sub">Find how two family members are related.</p>
-            <div class="form-group"><label data-i18n="person1">Person 1 (Start)</label><select id="rishtaStart" onchange="calculateRishta()"></select></div>
+            <div class="form-group"><label data-i18n="person1">Person 1 (Start)</label><select id="rishtaStart"></select></div>
             <div style="text-align: center; margin: 10px 0; color: var(--saffron); font-size: 20px;">↕</div>
-            <div class="form-group"><label data-i18n="person2">Person 2 (End)</label><select id="rishtaEnd" onchange="calculateRishta()"></select></div>
+            <div class="form-group"><label data-i18n="person2">Person 2 (End)</label><select id="rishtaEnd"></select></div>
             <button class="modal-btn btn-action" onclick="calculateRishta()" data-i18n="find_rel">Find Relationship</button>
             <div id="rishtaResult"></div>
         </div>
@@ -432,13 +431,11 @@
         function sanitize(str) { if (!str) return ''; return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[match])); }
         function showToast(msg) { const toast = document.getElementById("toast"); toast.innerText = msg; toast.className = "show"; setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000); }
         
-        // V12: Safe Parsing to prevent Top-Level Crashes
         function safeParseJSON(key, fallback) {
             try { const val = localStorage.getItem(key); return val ? JSON.parse(val) : fallback; } 
             catch (e) { console.warn(`Error parsing ${key}:`, e); return fallback; }
         }
         
-        // V12: Safe Save with Quota Check
         function safeSetItem(key, value) {
             try { localStorage.setItem(key, value); return true; } 
             catch (e) {
@@ -449,7 +446,6 @@
             }
         }
 
-        // V12: Global Keyboard Shortcuts (ESC & Undo/Redo/Search)
         document.addEventListener('keydown', (e) => { 
             if (e.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); } 
             if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); }
@@ -737,7 +733,6 @@
             };
         }
 
-        // V12 CRITICAL FIX: Safe Reset Tree avoids DOM reading
         function resetTree() {
             if (confirm(t('confirm_reset'))) {
                 familyData = generateDefaultTree();
@@ -767,7 +762,6 @@
                     const decompressed = LZString.decompressFromEncodedURIComponent(hash);
                     const sharedData = JSON.parse(decompressed);
                     
-                    // V12 HIGH FIX: Safe Share Link Load (Never overwrite active tree)
                     const newId = generateUUID();
                     const sharedTitle = (sharedData.config && sharedData.config.title) ? `Shared: ${sharedData.config.title}` : 'Shared Tree';
                     
@@ -802,7 +796,6 @@
         function redo() { if (historyIndex < historyStack.length - 1) { historyIndex++; familyData = JSON.parse(historyStack[historyIndex]); renderTree(); saveData(); updateHistoryUI(); } }
         function saveData() { safeSetItem('bansawali_data_' + activeTreeId, JSON.stringify(familyData)); }
 
-        // V12: Search Tree Feature
         function searchTree(query) {
             document.querySelectorAll('.node-box').forEach(box => box.classList.remove('highlighted-search'));
             if (!query.trim()) return;
@@ -854,7 +847,6 @@
         window.addEventListener('mouseup', () => isDragging = false);
         window.addEventListener('mousemove', (e) => { if (!isDragging) return; panX = e.clientX - startX; panY = e.clientY - startY; updateTransform(); });
         
-        // V12: Zoom toward cursor
         wrapper.addEventListener('wheel', (e) => { 
             e.preventDefault(); 
             const zoomFactor = e.deltaY < 0 ? 0.1 : -0.1;
@@ -882,7 +874,6 @@
             }
         }, {passive: false});
 
-        // V12 HIGH FIX: toggleBranch uses saveData directly, stops Undo stack pollution
         function toggleAllBranches(collapse) { function recursiveToggle(node) { if (node.children && node.children.length > 0) { node.collapsed = collapse; node.children.forEach(recursiveToggle); } } recursiveToggle(familyData); renderTree(); saveData(); }
         function toggleBranch(id) { const res = findNode(familyData, id); if (res) { res.node.collapsed = !res.node.collapsed; renderTree(); saveData(); } }
 
@@ -945,7 +936,6 @@
             }
         }
         
-        // V12: Safe CSS Keyframes Marquee for Upcoming Dates
         function updateUpcomingDates() {
             const today = new Date(); const currentMonth = today.getMonth() + 1; const currentDay = today.getDate();
             let upcoming = []; const dateRegex = /\b(0[1-9]|[12][0-9]|3[01])[\/\-](0[1-9]|1[012])\b/;
@@ -989,7 +979,6 @@
             document.getElementById('tree-root').innerHTML = `<ul>${generateNodeHTML(familyData, null, 1)}</ul>`; 
             updateUpcomingDates(); setTimeout(drawGenerationGridlines, 10); 
             
-            // V12 P1 Onboarding Tooltip
             const tooltip = document.getElementById('onboarding-tooltip');
             if (familyData && familyData.children.length === 0 && activeTreeId === 'default' && familyData.name === 'Mool Purush') {
                 const rootBox = document.querySelector('.node-box');
@@ -1166,7 +1155,7 @@
 
         function deleteNode() {
             const id = document.getElementById('editNodeId').value;
-            if (confirm("Delete member and ALL descendants? You can Undo (↩) immediately after if needed.")) {
+            if (confirm(t('confirm_reset'))) {
                 const result = findNode(familyData, id);
                 if (result && result.parent) { result.parent.children = result.parent.children.filter(child => child.id !== id); pushHistory(); renderTree(); closeModal('editorModal'); }
             }
@@ -1285,9 +1274,9 @@
 
             let graph = {};
             function buildGraph(node, parent) {
-                if(!graph[node.id]) graph[node.id] = { name: node.name, gender: node.gender, gotra: node.gotra, links: [] };
+                if(!graph[node.id]) graph[node.id] = { name: node.name, gender: node.gender, links: [] };
                 node.spouses.forEach(sp => {
-                    if(!graph[sp.id]) graph[sp.id] = { name: sp.name, gender: node.gender==='M'?'F':'M', gotra: node.gotra, links: [] }; // Spouses often take Gotra
+                    if(!graph[sp.id]) graph[sp.id] = { name: sp.name, gender: node.gender==='M'?'F':'M', links: [] };
                     graph[node.id].links.push({ id: sp.id, rel: 'Spouse' }); graph[sp.id].links.push({ id: node.id, rel: 'Spouse' });
                 });
                 if(parent) {
@@ -1384,7 +1373,7 @@
                     if (purePath.join('') === expectedPure.replace('Spouse', '')) {
                         if (pCount > 0 && cCount === 0) {
                             if (pCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law');
-                            else if (pCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandfather-in-law":"Grandmother-in-law") : getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law');
+                            else if (pCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandfather-in-law":"Grandmother-in-law") : getKinshipTerm(targetGender === 'M' ? 'Grandfather-in-law' : 'Grandmother-in-law');
                             else relationText = `${"Great-".repeat(pCount-2)} ${getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law')}`;
                         }
                         else if (pCount === 0 && cCount > 0) {
@@ -1414,16 +1403,11 @@
             else if (currentLang === 'kn') { text = `${endName}, ${startName} ಅವರ ${relationText} ಆಗಿದ್ದಾರೆ.`; } 
             else { text = `${endName} is ${startName}'s ${relationText}.`; }
             
-            // V12 P3: Sagotra Warning Check
-            const startGotra = graph[startId].gotra; const endGotra = graph[endId].gotra;
-            let gotraWarning = (startGotra && endGotra && startGotra.toLowerCase() === endGotra.toLowerCase() && startGotra !== '') 
-                ? `<br><span style="color:#d32f2f; font-size:12px;">⚠️ Sagotra Detected (${sanitize(startGotra)})</span>` : '';
-            
-            resDiv.innerHTML = text + gotraWarning;
+            resDiv.textContent = text;
             resDiv.style.display = 'block';
         }
 
-        // --- 7. TIERED EXPORTS ---
+        // --- 7. EXPORTS ---
         function generateShareLink() {
             try {
                 const payload = JSON.stringify({ config: appConfig, tree: familyData });
@@ -1439,28 +1423,6 @@
         function exportJSON() {
             const blob = new Blob([JSON.stringify({ config: appConfig, tree: familyData }, null, 2)], {type: "application/json"});
             const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${appConfig.title.replace(/\s+/g, '_')}_Backup.json`; a.click(); URL.revokeObjectURL(url);
-        }
-
-        function importJSON(event) {
-            const file = event.target.files[0]; if(!file) return; const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if(imported.tree && imported.config) { familyData = migrateData(imported.tree); appConfig = Object.assign({title: "Shri Parivar Bansawali", deity:"", origin:""}, imported.config); } 
-                    else if(imported.id) { familyData = migrateData(imported); }
-                    
-                    document.getElementById('configTitle').value = appConfig.title || '';
-                    document.getElementById('configDeity').value = appConfig.deity || '';
-                    document.getElementById('configOrigin').value = appConfig.origin || '';
-                    
-                    safeSetItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
-                    let tIndex = treeRegistry.findIndex(t => t.id === activeTreeId);
-                    if(tIndex > -1) { treeRegistry[tIndex].name = appConfig.title; safeSetItem('bansawali_registry', JSON.stringify(treeRegistry)); updateTreeDropdown(); }
-                    
-                    updateHeaderDisplay(); pushHistory(); renderTree(); resetZoom(); showToast("Data imported successfully!");
-                } catch(err) { console.error("JSON Parse Error:", err); alert("Import failed. Error: " + err.message + "\nEnsure the file is a valid JSON."); }
-                finally { closeModal('exportModal'); }
-            }; reader.readAsText(file); event.target.value = ''; 
         }
 
         function exportCSV() {
@@ -1497,31 +1459,50 @@
             states.expHeader.style.display = 'none'; if(states.wasDark) toggleTheme(true);
         }
 
-        // V12 TIERED EXPORT LOGIC
-        async function executeExport(type, scaleMultiplier) {
+        // V12.1 SMART TIERED EXPORT LOGIC
+        async function executeExport(event, type, requestedScale) {
             const btn = event.target; const oldText = btn.innerText; 
             btn.innerText = "⏳ Capturing (Do not close tab)..."; btn.disabled = true;
 
             const oldDataStr = JSON.stringify(familyData); const states = prepareForExport();
 
             try {
-                await new Promise(r => setTimeout(r, 100)); // Allow UI paint before heavy freeze
+                await new Promise(r => setTimeout(r, 100)); 
                 const element = document.getElementById('tree-container');
-                const canvas = await html2canvas(element, { scale: scaleMultiplier, backgroundColor: '#FFF8E7', windowWidth: element.scrollWidth, windowHeight: element.scrollHeight, logging: false });
                 
+                // V12.1 SMART SCALE CAPPING: Prevent 0-byte canvas crashes
+                let actualScale = requestedScale;
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                const maxSafeArea = isMobile ? 16777216 : 268435456; 
+                
+                const currentArea = element.scrollWidth * element.scrollHeight;
+                if (currentArea * (actualScale * actualScale) > maxSafeArea) {
+                    actualScale = Math.max(1, Math.floor(Math.sqrt(maxSafeArea / currentArea)));
+                    console.warn(`Scale reduced to ${actualScale}x to prevent browser crash.`);
+                }
+
+                const canvas = await html2canvas(element, { scale: actualScale, backgroundColor: '#FFF8E7', windowWidth: element.scrollWidth, windowHeight: element.scrollHeight, logging: false });
+                const imgData = canvas.toDataURL('image/png');
+                
+                // V12.1 ZERO-BYTE TRAP
+                if (!imgData || imgData === 'data:,' || imgData.length < 100) {
+                    throw new Error("Canvas rendering failed. Tree is too large.");
+                }
+
                 if(type === 'png') {
-                    const link = document.createElement('a'); link.download = `${appConfig.title.replace(/\s+/g, '_')}_Chart.png`; link.href = canvas.toDataURL('image/png'); link.click();
+                    const link = document.createElement('a'); link.download = `${appConfig.title.replace(/\s+/g, '_')}_Chart.png`; link.href = imgData; link.click();
+                    if (actualScale < requestedScale) { setTimeout(() => alert(`Note: Quality was automatically adjusted to ${actualScale}x to prevent your browser from crashing due to the large size of your family tree.`), 500); }
                 } else if(type === 'pdf') {
                     const { jsPDF } = window.jspdf; const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
                     const pdfWidth = pdf.internal.pageSize.getWidth(); const pdfHeight = pdf.internal.pageSize.getHeight();
-                    const ratio = pdfHeight / canvas.height; const scaledWidth = canvas.width * ratio; const imgData = canvas.toDataURL('image/png');
+                    const ratio = pdfHeight / canvas.height; const scaledWidth = canvas.width * ratio;
                     let widthLeft = scaledWidth; let positionX = 0;
                     pdf.addImage(imgData, 'PNG', positionX, 0, scaledWidth, pdfHeight); widthLeft -= pdfWidth;
                     while (widthLeft > 0) { positionX -= pdfWidth; pdf.addPage(); pdf.addImage(imgData, 'PNG', positionX, 0, scaledWidth, pdfHeight); widthLeft -= pdfWidth; }
                     pdf.save(`${appConfig.title.replace(/\s+/g, '_')}_Chart.pdf`);
                 }
             } catch(e) {
-                console.error(e); alert("Export failed! Your tree might be too large for this quality setting. Try a lower tier (e.g., Screen Quality).");
+                console.error(e); alert("Export failed! Your tree is too large for this quality setting. Try a lower quality like Print (5x) or Screen (2x).");
             } finally {
                 restoreAfterExport(states, oldDataStr); btn.innerText = oldText; btn.disabled = false; closeModal('exportModal');
             }
