@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Hindu Bansawali Builder V11.0</title>
+    <title>Enterprise Hindu Bansawali Builder V11.2</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
     
     <style>
+        /* LIGHT THEME VARIABLES */
         :root { 
             --saffron: #FF9933; --maroon: #800000; --gold: #FFB300; 
             --bg-warm: #FFF8E7; --border-color: #D4AF37; 
@@ -19,6 +20,7 @@
             --spouse-bg: rgba(255,255,255,0.6); --input-bg: #fff;
         }
         
+        /* DARK THEME VARIABLES */
         body.dark-mode {
             --bg-warm: #121417; --border-color: #555555; --text-main: #F0EAD6;
             --node-bg: #1E2024; --modal-bg: #1E2024;
@@ -239,6 +241,7 @@
             </div>
             
             <button class="btn btn-action" onclick="addRootAncestor()"><span data-i18n="add_ancestor">+ Ancestor</span></button>
+            <button class="btn btn-danger" onclick="resetTree()" title="Start a fresh tree">🔄 Reset</button>
             
             <button class="btn" onclick="generateShareLink()"><span data-i18n="share">🔗 Share</span></button>
             <button class="btn" onclick="document.getElementById('importFile').click()"><span data-i18n="import">📂 Import</span></button>
@@ -277,14 +280,10 @@
             <div class="om-symbol" style="font-size: 40px; margin-bottom: 10px;">ॐ</div>
             <h3 style="color:var(--maroon); margin-top: 0; font-size: 20px;">Enterprise Hindu Bansawali Builder</h3>
             <p style="font-size: 13px; opacity: 0.8;" data-i18n="about_desc">Designed and developed for families to beautifully document, explore, and preserve their rich heritage.</p>
-            
             <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 20px 0;">
-            
             <p style="font-size: 15px; margin-bottom: 5px;">Built with ❤️ by</p>
             <h2 style="margin: 0 0 15px 0; color: var(--saffron);">Indrajit Kumar Shah</h2>
-            
             <p style="font-size: 13px; opacity: 0.8; margin-bottom: 20px;" data-i18n="about_contact">Have suggestions, feature requests, or found a bug? Feel free to reach out!</p>
-            
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                 <a href="https://www.linkedin.com/in/indrajit-shahkumar/" target="_blank" class="contact-link bg-linkedin">🔗 LinkedIn</a>
                 <a href="mailto:indrajitkumshah@outlook.com?subject=Bansawali Builder Feedback" class="contact-link bg-email">✉️ Email Me</a>
@@ -399,7 +398,6 @@
         function showToast(msg) { const toast = document.getElementById("toast"); toast.innerText = msg; toast.className = "show"; setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000); }
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); } });
 
-        // V11.0: Full Pan-India i18n Dictionary
         const i18nDict = {
             en: {
                 about: "About", about_desc: "Designed and developed for families to beautifully document, explore, and preserve their rich heritage.", about_contact: "Have suggestions, feature requests, or found a bug? Feel free to reach out!",
@@ -501,7 +499,7 @@
             currentLang = lang;
             localStorage.setItem('bansawali_lang', currentLang);
             applyLanguage();
-            renderTree(); // refresh canvas UI terms
+            renderTree(); 
         }
 
         let isDarkMode = false;
@@ -628,21 +626,39 @@
             pushHistory(true); renderTree(); resetZoom();
         }
 
+        // CRITICAL V11.2 FIX: Safe JSON Migration to prevent crashes on bad files
         function migrateData(node) {
-            if (!node) return null;
+            if (!node || typeof node !== 'object') return null;
             if (!node.id) node.id = generateUUID();
             delete node.image; 
+            
             if (node.spouse !== undefined) {
                 if (typeof node.spouse === 'string' && node.spouse.trim() !== '') {
                     node.spouses = [{ id: generateUUID(), name: node.spouse, nameHi: node.spouseHi || '', status: node.spouseStatus || 'Living', relation: 'Married', dob: '', dod: '' }];
                 } else { node.spouses = []; }
                 delete node.spouse; delete node.spouseHi; delete node.spouseStatus;
             }
-            if (!node.spouses) node.spouses = [];
-            node.spouses.forEach(sp => { if (sp.dob === undefined) sp.dob = ''; if (sp.dod === undefined) sp.dod = ''; if(!sp.id) sp.id = generateUUID(); });
+            
+            if (!Array.isArray(node.spouses)) node.spouses = [];
+            node.spouses = node.spouses.filter(sp => sp && typeof sp === 'object');
+            node.spouses.forEach(sp => { 
+                if (sp.dob === undefined) sp.dob = ''; 
+                if (sp.dod === undefined) sp.dod = ''; 
+                if (!sp.id) sp.id = generateUUID(); 
+            });
+            
             if(node.motherId === undefined) node.motherId = ''; 
-            if(!node.notes) node.notes = ''; if(!node.gotra) node.gotra = ''; if(!node.dod) node.dod = ''; if(!node.children) node.children = [];
-            node.children.forEach(migrateData); return node;
+            if(!node.notes) node.notes = ''; 
+            if(!node.gotra) node.gotra = ''; 
+            if(!node.dod) node.dod = ''; 
+            if(!node.dob) node.dob = '';
+            if(!node.gender) node.gender = 'M';
+            if(!node.status) node.status = 'Living';
+            
+            if (!Array.isArray(node.children)) node.children = [];
+            node.children = node.children.map(migrateData).filter(c => c !== null); 
+            
+            return node;
         }
 
         function generateDefaultTree() {
@@ -666,9 +682,19 @@
                     const sharedData = JSON.parse(decompressed);
                     if (sharedData.tree) { familyData = migrateData(sharedData.tree); if(sharedData.config) appConfig = Object.assign(appConfig, sharedData.config); } 
                     else { familyData = migrateData(sharedData); }
+                    
                     history.replaceState(null, '', window.location.pathname + window.location.search);
                     showToast("Shared tree loaded! Edits will save locally.");
-                    saveData(); saveSettings(); 
+                    
+                    // Automatically save the loaded link to the active tree
+                    localStorage.setItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
+                    let tIndex = treeRegistry.findIndex(t => t.id === activeTreeId);
+                    if(tIndex > -1) { 
+                        treeRegistry[tIndex].name = appConfig.title; 
+                        localStorage.setItem('bansawali_registry', JSON.stringify(treeRegistry)); 
+                        updateTreeDropdown(); 
+                    }
+                    saveData(); 
                 } catch (e) { showToast("Invalid share link. Loading local data."); }
             } else {
                 loadTreeData();
@@ -686,13 +712,12 @@
         function redo() { if (historyIndex < historyStack.length - 1) { historyIndex++; familyData = JSON.parse(historyStack[historyIndex]); renderTree(); saveData(); updateHistoryUI(); } }
         function saveData() { localStorage.setItem('bansawali_data_' + activeTreeId, JSON.stringify(familyData)); }
 
-        // --- 3. DYNAMIC TRANSLATION API (V11.0) ---
+        // --- 3. DYNAMIC TRANSLATION API ---
         async function translateName(sourceId, targetId, btnId) {
             const text = document.getElementById(sourceId).value; if(!text) return;
             const targetInput = document.getElementById(targetId); const btn = document.getElementById(btnId);
             const origTxt = btn.innerText; btn.innerText = "⏳"; btn.disabled = true;
             
-            // Dynamic routing based on selected UI Language
             const langMap = { 'hi': 'hi-t-i0-und', 'ta': 'ta-t-i0-und', 'kn': 'kn-t-i0-und', 'en': 'hi-t-i0-und' };
             const itcCode = langMap[currentLang] || 'hi-t-i0-und';
 
@@ -930,7 +955,7 @@
                         <button class="remove-spouse-btn" onclick="removeSpouseEntry(${idx})">✖</button>
                         <div class="flex-row">
                             <div class="form-group"><label>${t('name_en')}</label><input type="text" id="spName_${idx}" value="${sanitize(sp.name)}"></div>
-                            <div class="form-group"><label>${t('name_local')}</label><div class="input-with-btn"><input type="text" id="spNameHi_${idx}" value="${sanitize(sp.nameHi)}"><button id="btnTransSp_${idx}" class="translate-btn" data-i18n="trans_btn" onclick="translateName('spName_${idx}', 'spNameHi_${idx}', 'btnTransSp_${idx}')">${t('trans_btn')}</button></div></div>
+                            <div class="form-group"><label>${t('name_local')}</label><div class="input-with-btn"><input type="text" id="spNameHi_${idx}" value="${sanitize(sp.nameHi)}"><button id="btnTransSp_${idx}" class="translate-btn" onclick="translateName('spName_${idx}', 'spNameHi_${idx}', 'btnTransSp_${idx}')">${t('trans_btn')}</button></div></div>
                         </div>
                         <div class="flex-row">
                             <div class="form-group"><label>${t('status')}</label><select id="spStatus_${idx}" onchange="toggleSpouseDOD(${idx})"><option value="Living" ${sp.status === 'Living'?'selected':''}>${t('living')}</option><option value="Deceased" ${sp.status === 'Deceased'?'selected':''}>${t('deceased')}</option></select></div>
@@ -1052,8 +1077,8 @@
             document.getElementById('datesListContainer').innerHTML = datesHtml; document.getElementById('insightsModal').style.display = 'flex';
         }
 
-        // --- V11.0: DYNAMIC KINSHIP ENGINE WITH MULTI-LINGUAL SUPPORT ---
-        function getKinshipTerm(englishTerm, gender) {
+        // --- V11.1: BULLETPROOF KINSHIP ENGINE ---
+        function getKinshipTerm(englishTerm) {
             const relDict = {
                 en: {
                     'Father': "Father", 'Mother': "Mother", 'Son': "Son", 'Daughter': "Daughter",
@@ -1064,7 +1089,9 @@
                     'Father-in-law': "Father-in-law", 'Mother-in-law': "Mother-in-law", 'Son-in-law': "Son-in-law", 'Daughter-in-law': "Daughter-in-law",
                     'Brother-in-law': "Brother-in-law", 'Sister-in-law': "Sister-in-law", 'Step-Father': "Step-Father", 'Step-Mother': "Step-Mother",
                     'Step-Son': "Step-Son", 'Step-Daughter': "Step-Daughter", 'Half-Brother': "Half-Brother", 'Half-Sister': "Half-Sister",
-                    'Grand-Nephew': "Grand-Nephew", 'Grand-Niece': "Grand-Niece", 'Grand-Uncle': "Grand-Uncle", 'Grand-Aunt': "Grand-Aunt"
+                    'Grand-Nephew': "Grand-Nephew", 'Grand-Niece': "Grand-Niece", 'Grand-Uncle': "Grand-Uncle", 'Grand-Aunt': "Grand-Aunt",
+                    'Grandson-in-law': "Grandson-in-law", 'Granddaughter-in-law': "Granddaughter-in-law",
+                    'Grandfather-in-law': "Grandfather-in-law", 'Grandmother-in-law': "Grandmother-in-law"
                 },
                 hi: {
                     'Father': "पिता", 'Mother': "माता", 'Son': "पुत्र", 'Daughter': "पुत्री",
@@ -1075,7 +1102,9 @@
                     'Father-in-law': "ससुर", 'Mother-in-law': "सास", 'Son-in-law': "दामाद", 'Daughter-in-law': "बहू",
                     'Brother-in-law': "जीजा/साला/देवर", 'Sister-in-law': "भाभी/साली/ननद", 'Step-Father': "सौतेला पिता", 'Step-Mother': "सौतेली माँ",
                     'Step-Son': "सौतेला बेटा", 'Step-Daughter': "सौतेली बेटी", 'Half-Brother': "सौतेला भाई", 'Half-Sister': "सौतेली बहन",
-                    'Grand-Nephew': "पोता/नाती", 'Grand-Niece': "पोती/नातिन", 'Grand-Uncle': "दादा/नाना", 'Grand-Aunt': "दादी/नानी"
+                    'Grand-Nephew': "पोता/नाती", 'Grand-Niece': "पोती/नातिन", 'Grand-Uncle': "दादा/नाना", 'Grand-Aunt': "दादी/नानी",
+                    'Grandson-in-law': "पोते का दामाद", 'Granddaughter-in-law': "पोते की बहू",
+                    'Grandfather-in-law': "दादा ससुर", 'Grandmother-in-law': "दादी सास"
                 },
                 ta: {
                     'Father': "தந்தை", 'Mother': "தாய்", 'Son': "மகன்", 'Daughter': "மகள்",
@@ -1086,7 +1115,9 @@
                     'Father-in-law': "மாமனார்", 'Mother-in-law': "மாமியார்", 'Son-in-law': "மருமகன்", 'Daughter-in-law': "மருமகள்",
                     'Brother-in-law': "மைத்துனன்", 'Sister-in-law': "மைத்துனி", 'Step-Father': "மாற்றாந்தந்தை", 'Step-Mother': "மாற்றாந்தாய்",
                     'Step-Son': "மாற்றான் மகன்", 'Step-Daughter': "மாற்றான் மகள்", 'Half-Brother': "அரைச் சகோதரன்", 'Half-Sister': "அரைச் சகோதரி",
-                    'Grand-Nephew': "பேரன்", 'Grand-Niece': "பேத்தி", 'Grand-Uncle': "தாத்தா", 'Grand-Aunt': "பாட்டி"
+                    'Grand-Nephew': "பேரன்", 'Grand-Niece': "பேத்தி", 'Grand-Uncle': "தாத்தா", 'Grand-Aunt': "பாட்டி",
+                    'Grandson-in-law': "பேரன் மருமகன்", 'Granddaughter-in-law': "பேத்தி மருமகள்",
+                    'Grandfather-in-law': "தாத்தா மாமனார்", 'Grandmother-in-law': "பாட்டி மாமியார்"
                 },
                 kn: {
                     'Father': "ತಂದೆ", 'Mother': "ತಾಯಿ", 'Son': "ಮಗ", 'Daughter': "ಮಗಳು",
@@ -1097,7 +1128,9 @@
                     'Father-in-law': "ಮಾವ", 'Mother-in-law': "ಅತ್ತೆ", 'Son-in-law': "ಅಳಿಯ", 'Daughter-in-law': "ಸೊಸೆ",
                     'Brother-in-law': "ಭಾವ/ಮೈದುನ", 'Sister-in-law': "ಅತ್ತಿಗೆ/ನಾದಿನಿ", 'Step-Father': "ಮಲತಂದೆ", 'Step-Mother': "ಮಲತಾಯಿ",
                     'Step-Son': "ಮಲಮಗ", 'Step-Daughter': "ಮಲಮಗಳು", 'Half-Brother': "ಮಲಸಹೋದರ", 'Half-Sister': "ಮಲಸಹೋದರಿ",
-                    'Grand-Nephew': "ಮೊಮ್ಮಗ", 'Grand-Niece': "ಮೊಮ್ಮಗಳು", 'Grand-Uncle': "ಅಜ್ಜ", 'Grand-Aunt': "ಅಜ್ಜಿ"
+                    'Grand-Nephew': "ಮೊಮ್ಮಗ", 'Grand-Niece': "ಮೊಮ್ಮಗಳು", 'Grand-Uncle': "ಅಜ್ಜ", 'Grand-Aunt': "ಅಜ್ಜಿ",
+                    'Grandson-in-law': "ಮೊಮ್ಮಗ ಅಳಿಯ", 'Granddaughter-in-law': "ಮೊಮ್ಮಗಳ ಸೊಸೆ",
+                    'Grandfather-in-law': "ಅಜ್ಜ ಮಾವ", 'Grandmother-in-law': "ಅಜ್ಜಿ ಅತ್ತೆ"
                 }
             };
             
@@ -1204,8 +1237,8 @@
                     if (purePath.join('') === expectedPure.replace('Spouse', '')) { 
                         if (pCount === 0 && cCount > 0) {
                             if (cCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Son-in-law' : 'Daughter-in-law');
-                            else if (cCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandson-in-law":"Granddaughter-in-law") : getKinshipTerm(targetGender === 'M' ? 'Son-in-law' : 'Daughter-in-law');
-                            else relationText = `${"Great-".repeat(cCount-2)} ${getKinshipTerm(targetGender === 'M' ? 'Son-in-law' : 'Daughter-in-law')}`;
+                            else if (cCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandson-in-law":"Granddaughter-in-law") : getKinshipTerm(targetGender === 'M' ? 'Grandson-in-law' : 'Granddaughter-in-law');
+                            else relationText = `${"Great-".repeat(cCount-2)} ${getKinshipTerm(targetGender === 'M' ? 'Grandson-in-law' : 'Granddaughter-in-law')}`;
                         }
                         else if (pCount > 0 && cCount === 0) {
                             if (pCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Step-Father' : 'Step-Mother');
@@ -1224,7 +1257,7 @@
                     if (purePath.join('') === expectedPure.replace('Spouse', '')) {
                         if (pCount > 0 && cCount === 0) {
                             if (pCount === 1) relationText = getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law');
-                            else if (pCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandfather-in-law":"Grandmother-in-law") : getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law');
+                            else if (pCount === 2) relationText = currentLang==='en'? (targetGender==='M'?"Grandfather-in-law":"Grandmother-in-law") : getKinshipTerm(targetGender === 'M' ? 'Grandfather-in-law' : 'Grandmother-in-law');
                             else relationText = `${"Great-".repeat(pCount-2)} ${getKinshipTerm(targetGender === 'M' ? 'Father-in-law' : 'Mother-in-law')}`;
                         }
                         else if (pCount === 0 && cCount > 0) {
@@ -1248,7 +1281,16 @@
                 else relationText = `Distant Relative (${pathArr.join(' -> ')})`;
             }
 
-            resDiv.textContent = `${graph[endId].name} is the ${relationText} of ${graph[startId].name}`;
+            // CRITICAL FIX: Safe, direct grammar string assignment
+            let startName = graph[startId].name;
+            let endName = graph[endId].name;
+            let text = "";
+            if (currentLang === 'hi') { text = `${endName}, ${startName} का/की ${relationText} है।`; } 
+            else if (currentLang === 'ta') { text = `${endName}, ${startName} இன் ${relationText} ஆவார்.`; } 
+            else if (currentLang === 'kn') { text = `${endName}, ${startName} ಅವರ ${relationText} ಆಗಿದ್ದಾರೆ.`; } 
+            else { text = `${endName} is ${startName}'s ${relationText}.`; }
+            
+            resDiv.textContent = text;
             resDiv.style.display = 'block';
         }
 
@@ -1273,15 +1315,36 @@
             const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${appConfig.title.replace(/\s+/g, '_')}_Backup.json`; a.click(); URL.revokeObjectURL(url);
         }
 
+        // CRITICAL FIX 11.2: Bulletproof JSON Import
         function importJSON(event) {
             const file = event.target.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
-                    if(imported.tree && imported.config) { familyData = migrateData(imported.tree); appConfig = Object.assign(appConfig, imported.config); } 
-                    else if(imported.id) { familyData = migrateData(imported); }
-                    updateHeaderDisplay(); saveAppConfig(); pushHistory(); renderTree(); resetZoom(); showToast("Data imported successfully!");
-                } catch(err) { alert("Invalid or corrupted JSON file."); }
+                    if(imported.tree && imported.config) { 
+                        familyData = migrateData(imported.tree); 
+                        appConfig = Object.assign({title: "Shri Parivar Bansawali", deity:"", origin:""}, imported.config); 
+                    } else if(imported.id) { 
+                        familyData = migrateData(imported); 
+                    }
+                    
+                    document.getElementById('configTitle').value = appConfig.title || '';
+                    document.getElementById('configDeity').value = appConfig.deity || '';
+                    document.getElementById('configOrigin').value = appConfig.origin || '';
+                    
+                    localStorage.setItem('bansawali_config_' + activeTreeId, JSON.stringify(appConfig));
+                    let tIndex = treeRegistry.findIndex(t => t.id === activeTreeId);
+                    if(tIndex > -1) { 
+                        treeRegistry[tIndex].name = appConfig.title; 
+                        localStorage.setItem('bansawali_registry', JSON.stringify(treeRegistry)); 
+                        updateTreeDropdown(); 
+                    }
+                    
+                    updateHeaderDisplay(); pushHistory(); renderTree(); resetZoom(); showToast("Data imported successfully!");
+                } catch(err) { 
+                    console.error("JSON Parse Error:", err);
+                    alert("Import failed. Error: " + err.message + "\nEnsure the file is a valid JSON."); 
+                }
             }; reader.readAsText(file); event.target.value = ''; 
         }
 
